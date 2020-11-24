@@ -183,7 +183,72 @@ For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biolog
 
 ## Visualisation
 
+The following code can be used to generate -log<10> p-value tracks from the output of MACS peak calling.
+
+**Convert the bam file to a bed file**
+
+```bash
+bedtools bamtobed -i <chip>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <chip>.bed.gz
+bedtools bamtobed -i <input>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <input>.bed.gz
+```
+
+Generate a pileup file, which contains the number of reads in each peak
+
+```bash
+estd=300
+###  Extend ChIP sample to get ChIP coverage track                                                                                
+macs2 pileup -i ${chip}.bed.gz -o ${chip}.pileup.bdg --extsize ${estd}
+###  Extend the control read to both sides (-B option) using pileup function.                                                     
+macs2 pileup -i ${input}.bed.gz -B --extsize 150 -o d_bg.bdg
+
+###  Create a local background ( 1kb window)       
+macs2 pileup -i ${input}.bed.gz -B --extsize 500 -o 1k_bg.bdg
+### Normalize the 1kb noise by multiplying the values by d/slocal ( its 300/1000 )      
+macs2 bdgopt -i 1k_bg.bdg -m multiply -p 0.3 -o 1k_bg_norm.bdg
+
+###  Create a large local background ( 10 kb window)                                                                              
+macs2 pileup -i ${input}.bed.gz -B --extsize 5000 -o 10k_bg.bdg
+### Normalize the 10kb noise by multiplying the values by d/slocal ( its 300/10000 )                                              
+macs2 bdgopt -i 10k_bg.bdg -m multiply -p 0.03 -o 10k_bg_norm.bdg
+
+### Compute the maximum bias for each genomic location.                                                                           
+macs2 bdgcmp -m max -t 1k_bg_norm.bdg -c 10k_bg_norm.bdg -o 1k_10k_bg_norm.bdg
+macs2 bdgcmp -m max -t 1k_10k_bg_norm.bdg -c d_bg.bdg -o d_1k_10k_bg_norm.bdg
+ctrl_reads=`zcat ${input}.bed.gz | wc -l`
+
+###  The whole genome background can be calculated as the number of control reads/genome size*fragment length                     
+genome_background=`echo "123" | awk -v ctrl_reads=$ctrl_reads '{ print (ctrl_reads*300)/2700000000 }'`
+### Compute the genome wide background                                                                                            
+macs2 bdgopt -i d_1k_10k_bg_norm.bdg -m max -p ${genome_background} -o local_bias_raw.bdg
+chip_reads=`zcat ${chip}.bed.gz | wc -l `
+###   Create a temp copy of chip and local bias sample                                                                            
+cp ${chip}.pileup.bdg scaled_treat.pileup.bdg
+cp local_bias_raw.bdg local_lambda.bdg
+
+###  Scale the ChIP and control to the same sequencing depth.                                                                     
+### If the control has more reads, it needs to be scaled down by multiplying the ratio of Chip/control or vice versa              
+echo "foo" | awk -v ctrl=${ctrl_reads} -v chip=${chip_reads} -v chip_sample=${chip}.pileup.bdg '{                                 
+        if ( ctrl > chip ) {                                                                                                      
+                scale=chip/ctrl;                                                                                                  
+                print "macs2 bdgopt -i local_bias_raw.bdg -m multiply -p " scale " -o local_lambda.bdg"                           
+        }                                                                                                                         
+        else {                                                                                                                    
+                scale=ctrl/chip;                                                                                                  
+                print "macs2 bdgopt -i " chip_sample " -m multiply -p " scale " -o scaled_treat.pileup.bdg"                       
+        }                                                                                                                         
+ }' | parallel
+
+mv scaled_treat.pileup.bdg ${chip}.pileup.bdg
+mv local_lambda.bdg local_bias_raw.bdg
+macs2 bdgcmp -t ${chip}.pileup.bdg -c local_bias_raw.bdg -m ppois -o ${chip}.pileup_pvalue.bdg
+macs2 bdgcmp -t ${chip}.pileup.bdg -c local_bias_raw.bdg -m qpois  -o ${chip}.pileup_qvalue.bdg
+cp local_bias_raw.bdg ${chip}.pileup_pvalue.bdg ${chip}.pileup_qvalue.bdg ${chip}.pileup.bdg ${wd}
+```
+
+
 - Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
+
+
 
 ## ChIPmentation analysis steps 
 
