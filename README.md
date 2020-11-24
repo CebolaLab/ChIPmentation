@@ -169,9 +169,6 @@ rm <sample>.tmp.bam
 
 ## Peak calling
 
-- Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
-
-## Visualisation
 
 MACSs - broad for histone marks, narrow for transcription factors. 
 
@@ -183,6 +180,10 @@ The ChIPmentaion paper uses MACS2 with:
 
 For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
 
+
+## Visualisation
+
+- Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
 
 ## ChIPmentation analysis steps 
 
