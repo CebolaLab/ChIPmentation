@@ -183,7 +183,9 @@ For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biolog
 
 ## Visualisation
 
-The following code can be used to generate <sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, with which the data is normalised to.
+The following code can be used to generate <sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, with which the data is normalised to. 
+
+*Thank you to Goutham Atla for the following code*.
 
 **Convert the bam file to a bed file**
 
