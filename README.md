@@ -71,7 +71,7 @@ Bowtie2 should be used to create the reference genome index files (see the bowti
 bt2idx=/path/to/reference-genome
 
 #Run the bowtie2 alignment and output a bam alignment file
-bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 35 -X 700 -x $bt2idx/human_g1k_v37.fasta -1 <sample>_R1.trimmed.fastq.gz -2 <sample>_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
+bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 20 -X 700 -x $bt2idx/human_g1k_v37.fasta -1 <sample>_R1.trimmed.fastq.gz -2 <sample>_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
 
 #If your sample was sequenced across multiple lanes, in this case lane 1 (L002) and lane 2 (L003):
 #bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 35 -X 700 -x $bt2idx/human_g1k_v37.fasta -1 <sample>_L001_R1.trimmed.fastq.gz,<sample>_L002_R1.trimmed.fastq.gz -2 <sample>_L001_R2.trimmed.fastq.gz,<sample>_L002_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
@@ -111,7 +111,7 @@ head -n 8 <sample>.dup.metrics | cut -f 7,9 | grep -v ^# | tail -n 2
 
 The output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which are uniquely mapped are assigned a high alignment quality score and one genomic position. If reads can map to more than one location, Bowtie2 reports one position and assigns a low quality score. The proportion of uniquely mapped reads can be assessed. In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). Secondly, the 'flag' reports information such as whether the read is mapped as a pair or is a PCR duplicate. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevent the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
 
-**Multi-mapping:** the user should decide whether or not to retain reads which have multi-mapped, i.e. aligned to more than one position in the reference genome. When using paired-end data, it may be the case that one read aligns to a repetitive region (and therefore can map elsewhere), while the mate aligns to a unique sequence with a high quality. The bowtie2 parameters used above required reads to align within 50-700bp, so there should be no reads incorrectly aligned outside this distance. As such, the user may decide to keep multi-mapping reads on the assumption that they are likely to be mapped to the correct sequence, within the length of the DNA fragment. This may, however, cause incorrect alignments in extended repetitive regions where a read could map to multiple positions within the length of the DNA fragment. This should be minimised by the downstream removal of the [ENCODE Blacklisted regions](https://www.nature.com/articles/s41598-019-45839-z).
+**Multi-mapping:** the user should decide whether or not to retain reads which have multi-mapped, i.e. aligned to more than one position in the reference genome. When using paired-end data, it may be the case that one read aligns to a repetitive region (and therefore can map elsewhere), while the mate aligns to a unique sequence with a high quality. The bowtie2 parameters used above required reads to align within 20-700bp, so there should be no reads incorrectly aligned outside this distance. As such, the user may decide to keep multi-mapping reads on the assumption that they are likely to be mapped to the correct sequence, within the length of the DNA fragment. This may, however, cause incorrect alignments in extended repetitive regions where a read could map to multiple positions within the length of the DNA fragment. This should be minimised by the downstream removal of the [ENCODE Blacklisted regions](https://www.nature.com/articles/s41598-019-45839-z).
 
 If a read is multi-mapped, it is assigned a low quality score by bowtie2. To view how many DNA reads align with a quality score >30, run the following (divide this number by 2 to calculate the # of DNA fragments):
 
@@ -184,70 +184,8 @@ For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biolog
 
 
 ## Visualisation
-*Thank you to Goutham Atla for the following code*.
 
 The following code can be used to generate log<sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, which the data is normalised to. 
-
-
-```bash
-#Convert the bam file to a bed file
-bedtools bamtobed -i <chip>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <chip>.bed.gz
-bedtools bamtobed -i <input>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <input>.bed.gz
-
-#Generate a pileup file, which contains the number of reads in each peak
-
-estd=300
-###  Extend ChIP sample to get ChIP coverage track and the control one both sides (-B option) using pileip 
-macs2 pileup -i ${chip}.bed.gz -o ${chip}.pileup.bdg --extsize ${estd}                        
-macs2 pileup -i ${input}.bed.gz -B --extsize 150 -o d_bg.bdg
-
-###  Create a local background (1kb window)
-macs2 pileup -i ${input}.bed.gz -B --extsize 500 -o 1k_bg.bdg
-### Normalize the 1kb noise by multiplying the values by d/slocal ( its 300/1000 )      
-macs2 bdgopt -i 1k_bg.bdg -m multiply -p 0.3 -o 1k_bg_norm.bdg
-
-###  Create a large local background (10 kb window)                                                                              
-macs2 pileup -i ${input}.bed.gz -B --extsize 5000 -o 10k_bg.bdg
-### Normalize the 10kb noise by multiplying the values by d/slocal ( its 300/10000 )                                              
-macs2 bdgopt -i 10k_bg.bdg -m multiply -p 0.03 -o 10k_bg_norm.bdg
-
-### Compute the maximum bias for each genomic location.                                                                           
-macs2 bdgcmp -m max -t 1k_bg_norm.bdg -c 10k_bg_norm.bdg -o 1k_10k_bg_norm.bdg
-macs2 bdgcmp -m max -t 1k_10k_bg_norm.bdg -c d_bg.bdg -o d_1k_10k_bg_norm.bdg
-
-ctrl_reads=`zcat ${input}.bed.gz | wc -l`
-```
-
-
-```bash
-###  The whole genome background can be calculated as the number of control reads/genome size*fragment length                     
-genome_background=`echo "123" | awk -v ctrl_reads=$ctrl_reads '{ print (ctrl_reads*300)/2700000000 }'`
-### Compute the genome wide background                                                                                            
-macs2 bdgopt -i d_1k_10k_bg_norm.bdg -m max -p ${genome_background} -o local_bias_raw.bdg
-chip_reads=`zcat ${chip}.bed.gz | wc -l `
-###   Create a temp copy of chip and local bias sample                                                                            
-cp ${chip}.pileup.bdg scaled_treat.pileup.bdg
-cp local_bias_raw.bdg local_lambda.bdg
-
-###  Scale the ChIP and control to the same sequencing depth.                                                                     
-### If the control has more reads, it needs to be scaled down by multiplying the ratio of Chip/control or vice versa              
-echo "foo" | awk -v ctrl=${ctrl_reads} -v chip=${chip_reads} -v chip_sample=${chip}.pileup.bdg '{                                 
-        if ( ctrl > chip ) {                                                                                                      
-                scale=chip/ctrl;                                                                                                  
-                print "macs2 bdgopt -i local_bias_raw.bdg -m multiply -p " scale " -o local_lambda.bdg"                           
-        }                                                                                                                         
-        else {                                                                                                                    
-                scale=ctrl/chip;                                                                                                  
-                print "macs2 bdgopt -i " chip_sample " -m multiply -p " scale " -o scaled_treat.pileup.bdg"                       
-        }                                                                                                                         
- }' | parallel
-
-mv scaled_treat.pileup.bdg ${chip}.pileup.bdg
-mv local_lambda.bdg local_bias_raw.bdg
-macs2 bdgcmp -t ${chip}.pileup.bdg -c local_bias_raw.bdg -m ppois -o ${chip}.pileup_pvalue.bdg
-macs2 bdgcmp -t ${chip}.pileup.bdg -c local_bias_raw.bdg -m qpois  -o ${chip}.pileup_qvalue.bdg
-cp local_bias_raw.bdg ${chip}.pileup_pvalue.bdg ${chip}.pileup_qvalue.bdg ${chip}.pileup.bdg ${wd}
-```
 
 
 - Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
