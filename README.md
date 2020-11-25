@@ -119,7 +119,9 @@ If a read is multi-mapped, it is assigned a low quality score by bowtie2. To vie
 samtools view -q 30 -c <sample>.marked.bam
 ```
 
-A low % of uniquely mapped reads map result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). The following code uses the `sam/bam` flags to retain properly mapped pairs (`-f 2`) and to remove reads which fail the platform/vendor QC checks (`-F 512`), duplicate reads (`-F 1024`) and those which are unmapped (`-F 12`). The three flags to be removed can be combined into `-F 1548`, which will remove reads which meet any of the three individual flags
+A low % of uniquely mapped reads map result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). The following code uses the `sam/bam` flags to retain properly mapped pairs (`-f 2`) and to remove reads which fail the platform/vendor QC checks (`-F 512`), duplicate reads (`-F 1024`) and those which are unmapped (`-F 12`). The three flags to be removed can be combined into `-F 1548`, which will remove reads which meet any of the three individual flags.
+
+It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads (the second option below) to increase confidence and reproducibility:
 
 To ***retain*** multi-mapped reads:
 
@@ -182,33 +184,29 @@ For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biolog
 
 
 ## Visualisation
-
-The following code can be used to generate <sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, with which the data is normalised to. 
-
 *Thank you to Goutham Atla for the following code*.
 
-**Convert the bam file to a bed file**
+The following code can be used to generate log<sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, which the data is normalised to. 
+
 
 ```bash
+#Convert the bam file to a bed file
 bedtools bamtobed -i <chip>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <chip>.bed.gz
 bedtools bamtobed -i <input>.bam | awk 'BEGIN{OFS="\t"}{$4="N";$5="1000";print $0}' | gzip -c > <input>.bed.gz
-```
 
-Generate a pileup file, which contains the number of reads in each peak
+#Generate a pileup file, which contains the number of reads in each peak
 
-```bash
 estd=300
-###  Extend ChIP sample to get ChIP coverage track                                                                                
-macs2 pileup -i ${chip}.bed.gz -o ${chip}.pileup.bdg --extsize ${estd}
-###  Extend the control read to both sides (-B option) using pileup function.                                                     
+###  Extend ChIP sample to get ChIP coverage track and the control one both sides (-B option) using pileip 
+macs2 pileup -i ${chip}.bed.gz -o ${chip}.pileup.bdg --extsize ${estd}                        
 macs2 pileup -i ${input}.bed.gz -B --extsize 150 -o d_bg.bdg
 
-###  Create a local background ( 1kb window)       
+###  Create a local background (1kb window)
 macs2 pileup -i ${input}.bed.gz -B --extsize 500 -o 1k_bg.bdg
 ### Normalize the 1kb noise by multiplying the values by d/slocal ( its 300/1000 )      
 macs2 bdgopt -i 1k_bg.bdg -m multiply -p 0.3 -o 1k_bg_norm.bdg
 
-###  Create a large local background ( 10 kb window)                                                                              
+###  Create a large local background (10 kb window)                                                                              
 macs2 pileup -i ${input}.bed.gz -B --extsize 5000 -o 10k_bg.bdg
 ### Normalize the 10kb noise by multiplying the values by d/slocal ( its 300/10000 )                                              
 macs2 bdgopt -i 10k_bg.bdg -m multiply -p 0.03 -o 10k_bg_norm.bdg
@@ -216,8 +214,12 @@ macs2 bdgopt -i 10k_bg.bdg -m multiply -p 0.03 -o 10k_bg_norm.bdg
 ### Compute the maximum bias for each genomic location.                                                                           
 macs2 bdgcmp -m max -t 1k_bg_norm.bdg -c 10k_bg_norm.bdg -o 1k_10k_bg_norm.bdg
 macs2 bdgcmp -m max -t 1k_10k_bg_norm.bdg -c d_bg.bdg -o d_1k_10k_bg_norm.bdg
-ctrl_reads=`zcat ${input}.bed.gz | wc -l`
 
+ctrl_reads=`zcat ${input}.bed.gz | wc -l`
+```
+
+
+```bash
 ###  The whole genome background can be calculated as the number of control reads/genome size*fragment length                     
 genome_background=`echo "123" | awk -v ctrl_reads=$ctrl_reads '{ print (ctrl_reads*300)/2700000000 }'`
 ### Compute the genome wide background                                                                                            
@@ -249,6 +251,14 @@ cp local_bias_raw.bdg ${chip}.pileup_pvalue.bdg ${chip}.pileup_qvalue.bdg ${chip
 
 
 - Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
+
+## Peak Quality Control
+
+To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard hbctraining. 
+
+## Differential binding
+
+[DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html)
 
 
 
