@@ -21,7 +21,7 @@ The resources and references used to build this tutorial are found at the bottom
 
 ### Pre-alignment QC
 
-The raw sequence data should first be assessed for quality. [FastQC reports](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf) can be generated for all samples to assess sequence quality, GC content, duplication rates, length distribution, K-mer content and adapter contamination. In ATAC-seq data, it is likely that Nextera sequencing adapters will be over-represented. As described by [Yan et al. (2020)](https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-020-1929-3), base quality should be high although may drop slightly at the 3' end, while GC content and read length should be consistent with the expected values. For paired-end reads, run fastqc on both files, with the results output to the current directory:
+The raw sequence data should first be assessed for quality. [FastQC reports](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf) can be generated for all samples to assess sequence quality, GC content, duplication rates, length distribution, K-mer content and adapter contamination. As described by [Yan et al. (2020)](https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-020-1929-3), base quality should be high although may drop slightly at the 3' end, while GC content and read length should be consistent with the expected values. For paired-end reads, run fastqc on both files, with the results output to the current directory:
 
 ```
 fastqc <sample>_R1.fastq.gz -d . -o .
@@ -35,10 +35,10 @@ Adapters and low quality reads/bases should be trimmed using one of several prog
 
 <img src="https://github.com/CebolaLab/ATAC-seq/blob/master/Figures/adapters.png" width="800">
 
-For this pipeline, fastp is used to remove adapter sequences. The minimum fragment length is set at 35, since short ATAC-seq fragments can be observed if the transposase cuts adjacent nucleosome-free DNA. 
+For this pipeline, fastp is used to remove adapter sequences. The minimum fragment length is set at 20.
 
 ```bash
-fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fastq.gz -O <sample>_R2.trimmed.fastq.gz --detect_adapter_for_pe -l 35 -j <sample>.fastp.json -h <sample>.fastp.html
+fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fastq.gz -O <sample>_R2.trimmed.fastq.gz --detect_adapter_for_pe -l 20 -j <sample>.fastp.json -h <sample>.fastp.html
 ```
 
 The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
@@ -64,7 +64,7 @@ wget ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/human_g1k_
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.gz
 ```
 
-Bowtie2 should be used to create the reference genome index files (see the bowtie2 [manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome)). After the index files have been generated, align the trimmed ATAC-seq fastq files to the genome (here using hg19/b37). If a sample has been sequenced across multiple lanes, assuming the samples are balanced and there are no batch effects, bowtie2 can access multiple files as a comma seperated list:
+Bowtie2 should be used to create the reference genome index files (see the bowtie2 [manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome)). After the index files have been generated, align the trimmed fastq files to the genome (here using hg19/b37). If a sample has been sequenced across multiple lanes, assuming the samples are balanced and there are no batch effects, bowtie2 can access multiple files as a comma seperated list:
 
 ```bash
 #set the bt2idx variable to the directory with the reference genome and indexes
@@ -171,6 +171,12 @@ rm <sample>.tmp.bam
 
 ## Peak calling
 
+The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. 
+
+```bash
+macs2 callpeak -t <sample>.shifted.bam
+```
+
 
 MACSs - broad for histone marks, narrow for transcription factors. 
 
@@ -214,3 +220,6 @@ The original ChIPmentaion paper 'ChIPmentation: fast, robust, low-input ChIP-seq
 	Bandwideth of 200bp and matched IgG control as background. 
 
 For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
+
+
+
