@@ -130,7 +130,7 @@ We can use the `bedtools` command  `alignmentSieve`.
 
 ```bash
 #The user can set the preferred number of processors 
-alignmentSieve --numberOfProcessors max --ATACshift --blackListFileName hg19-blacklist.v2.bed --bam <sample>.blacklist-filtered.bam -o <sample>.tmp.bam
+alignmentSieve --numberOfProcessors max --ATACshift --blackListFileName hg38-blacklist.v2.bed --bam <sample>.blacklist-filtered.bam -o <sample>.tmp.bam
 
 #Sort and index the bam file
 #Set the number of preferred threads with the -@ option
@@ -149,7 +149,7 @@ To visualise the input and data tracks, use `bamCoverage`. The input requires th
 ```bash
 #RPGC is reads per genome coverage
 #2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable. 
-bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg19-blacklist.v2.bed
+bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
 ```
 
 To generate a data track normalised to the input:
@@ -158,7 +158,7 @@ To generate a data track normalised to the input:
 #Add -p to specify the number of processors to use
 #–ignoreForNormalization chrX chrM may be useful if samples have uneven coverage across the sex chromosomes
 #--scaleFactorsMethod readCount or --normaliseUsing BPM ? 
-bamCompare --scaleFactorsMethod readCount --blackListFileName hg19-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
+bamCompare --scaleFactorsMethod readCount --blackListFileName hg38-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
 ```
 
 
