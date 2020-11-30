@@ -96,7 +96,7 @@ The post-alignment QC involves several steps:
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates)
 
-### Mark duplicates 
+### Removed unmapped reads, multi-mapped reads and duplicates and estimate library complexity
 
 The following command will remove unmapped reads and secondary alignments `samtools fixmate -r` and remove duplicate reads `samtools markdup -r`. The `samtools markdup` will also estimate library complexity, with the output saved in the `<sample>.markdup.stats` file.
 
