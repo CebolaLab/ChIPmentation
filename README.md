@@ -8,6 +8,28 @@ Correspondence: hannah.maude12@imperial.ac.uk
 
 The resources and references used to build this tutorial are found at the bottom, in the [resources](#resources) section.
 
+## Experiment guidelines
+
+According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the current standards of ChIP-seq experiments are as follows:
+
+- Each ChIP-seq experiment should have a corresponding input control experiment with matching run type, read length, and replicate structure. 
+- For narrow-peak histone experiments, each replicate should have 20 million usable fragments.
+- For broad-peak histone experiments, each replicate should have 45 million usable fragments.
+- Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
+
+For uniformity of experiments, it is recommended that:
+
+- The read length should be a minimum of 50 base pairs, though longer read lengths are encouraged; the pipeline can process read lengths as low as 25 base pairs. Sequencing may be paired- or single-ended.
+- The sequencing platform used should be indicated.
+- Replicates should match in terms of read length and run type. 
+- Pipeline files are mapped to either the GRCh38 or mm10 sequences.
+
+The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), detailed the outputs:
+
+<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/outputs-ENCODE.png" width="600">
+
+In addition, this pipeline will cover differential binding analysis, functional analysis and motif discovery. 
+
 ## Table of Contents
 
 - [Pre-alignment quality control (QC)](#pre-alignment-qc) 
@@ -19,21 +41,6 @@ The resources and references used to build this tutorial are found at the bottom
 - [Peak and p-value visualisation](#peak-and-p-value-visualisation)
 - [Differential binding analysis](#differntial-binding)
 - Functional analysis & Motif Discovery
-
-## Experiment guidelines
-
-According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the current standards of ChIP-seq experiments are as follows:
-
-- Each ChIP-seq experiment should have a corresponding input control experiment with matching run type, read length, and replicate structure. 
-- For narrow-peak histone experiments, each replicate should have 20 million usable fragments.
-- For broad-peak histone experiments, each replicate should have 45 million usable fragments.
-
-For uniformity of experiments, it is recommended that:
-
-- The read length should be a minimum of 50 base pairs, though longer read lengths are encouraged; the pipeline can process read lengths as low as 25 base pairs. Sequencing may be paired- or single-ended.
-- The sequencing platform used should be indicated.
-- Replicates should match in terms of read length and run type. 
-- Pipeline files are mapped to either the GRCh38 or mm10 sequences.
 
 ### Pre-alignment QC
 
@@ -113,6 +120,7 @@ The post-alignment QC involves several steps:
 
 
 [ENCODE](https://www.encodeproject.org/chip-seq/histone/) requires library complexity to be measured using the Non-Redundant Fraction (NRF) and PCR Bottlenecking Coefficients 1 and 2, or PBC1 and PBC2. Preferred values are as follows: NRF\>0.9, PBC1\>0.9, and PBC2\>10.
+
 
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
 
