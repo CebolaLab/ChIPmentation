@@ -93,7 +93,7 @@ The post-alignment QC involves several steps:
 
 - [Remove unmapped, multi-mapped and duplicates reads and estimate library complexity](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
-- [Shift read coordinates](#shift-read-coordinates)
+- [Shift read coordinates](#shift-read-coordinates-optional)
 
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
 
@@ -123,13 +123,12 @@ The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most re
 bedtools intersect -nonamecheck -v -abam <sample>.rmdup.bam -b hg38-blacklist.v2.bed > <sample>.blacklist-filtered.bam
 ```
 
-### Shift read coordinates
+### Shift read coordinates [optional]
 
-An optional step in analysing data generated using the Tn5 transposase (such as ATAC-seq, ChIPmentation etc.) is to account for a small DNA insertion, introducted as repair of the transposase-induced nick introduces a 9bp insertion. Reads aligning to the + strand should be offset by +4bp and reads aligned to the -ve strand should be offset by -5bp [(Buenrostro et al., 2013; ](https://www.nature.com/articles/nmeth.2688)[Adey et al., 2010)](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-12-r119) which showed this insertion bias. Shifting coordinates is only really important if single-base resolution is required, for example in the analysis of transcription factor motifs in ATAC-seq peak footprints. Be aware that some tools do this shifting themselves (so double check manuals!).
+An optional step in analysing data generated using the Tn5 transposase (such as ATAC-seq, ChIPmentation etc.) is to account for a small DNA insertion, introducted as repair of the transposase-induced nick introduces a 9bp insertion. Reads aligning to the + strand should be offset by +4bp and reads aligned to the -ve strand should be offset by -5bp [(Buenrostro et al., 2013; ](https://www.nature.com/articles/nmeth.2688)[Adey et al., 2010)](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-12-r119). Shifting coordinates is only really important if single-base resolution is required, for example in the analysis of transcription factor motifs in ATAC-seq peak footprints. Be aware that some tools do this shifting themselves (so double check manuals!).
  
 
 We can use the `bedtools` command  `alignmentSieve`.
-
 
 ```bash
 #The user can set the preferred number of processors 
@@ -145,21 +144,22 @@ rm <sample>.tmp.bam
 
 ## Alignment visualisation
 
-The `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file is normalised to. The `bamCompare` tool from the `deeptools` package will be used. 
+The `<sample>.blacklist-filtered.bam` or `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file is normalised to. The `bamCompare` tool from the `deeptools` package will be used. 
 
 To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated, a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
 
 ```bash
-#RPGC is reads per genome coverage
+#RPGC is reads per genome coverage.
 #2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable. 
+#Edit <sample>.shifted.bam to <sample>.blacklist-filtered.bam if you did not run the coordinate shifting.
 bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
 ```
 
 To generate a data track normalised to the input:
 
 ```bash
-#Add -p to specify the number of processors to use
-#–ignoreForNormalization chrX chrM may be useful if samples have uneven coverage across the sex chromosomes
+#Add -p to specify the number of processors to use.
+#–ignoreForNormalization chrX chrM may be useful if samples have uneven coverage across the sex chromosomes.
 #--scaleFactorsMethod readCount or --normaliseUsing BPM ? 
 bamCompare --scaleFactorsMethod readCount --blackListFileName hg38-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
 ```
