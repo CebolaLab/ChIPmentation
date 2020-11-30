@@ -13,11 +13,12 @@ The resources and references used to build this tutorial are found at the bottom
 - [Pre-alignment quality control (QC)](#pre-alignment-qc) 
 - [Alignment](#alignment) 
 - [Post-alignment QC](#post-alignment-qc) - filter, check library complexity and format for peak calling
-- [Peak Calling](#peak-calling)
-- [Peak Calling QC and differential accessibility (DA) analysis](#peak-QC-and-DA)
-- [Visualisation](#visualisation)
+- [Alignment visualisation](#alignment-visualisation)
+- [Peak calling](#peak-calling)
+- [Peak quality control](#peak-quality-control)
+- [Peak and p-value visualisation](#peak-and-p-value-visualisation)
+- [Differential binding analysis](#differntial-binding)
 - Functional analysis & Motif Discovery
-
 
 ### Pre-alignment QC
 
@@ -146,7 +147,7 @@ rm <sample>.tmp.bam
 
 The `<sample>.blacklist-filtered.bam` or `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file is normalised to. The `bamCompare` tool from the `deeptools` package will be used. 
 
-To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated, a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
+To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated; a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
 
 ```bash
 #RPGC is reads per genome coverage
@@ -183,9 +184,12 @@ The ChIPmentaion paper uses MACS2 with:
 
 For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
 
-## Peak Quality Control
+## Peak quality control
 
 To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard hbctraining. 
+
+## Peak and p-value visualisation
+
 
 ## Differential binding
 
