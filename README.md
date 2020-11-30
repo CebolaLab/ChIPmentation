@@ -20,6 +20,21 @@ The resources and references used to build this tutorial are found at the bottom
 - [Differential binding analysis](#differntial-binding)
 - Functional analysis & Motif Discovery
 
+## Experiment guidelines
+
+According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the current standards of ChIP-seq experiments are as follows:
+
+- Each ChIP-seq experiment should have a corresponding input control experiment with matching run type, read length, and replicate structure. 
+- For narrow-peak histone experiments, each replicate should have 20 million usable fragments.
+- For broad-peak histone experiments, each replicate should have 45 million usable fragments.
+
+For uniformity of experiments, it is recommended that:
+
+- The read length should be a minimum of 50 base pairs, though longer read lengths are encouraged; the pipeline can process read lengths as low as 25 base pairs. Sequencing may be paired- or single-ended.
+- The sequencing platform used should be indicated.
+- Replicates should match in terms of read length and run type. 
+- Pipeline files are mapped to either the GRCh38 or mm10 sequences.
+
 ### Pre-alignment QC
 
 The raw sequence data should first be assessed for quality. [FastQC reports](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf) can be generated for all samples to assess sequence quality, GC content, duplication rates, length distribution, K-mer content and adapter contamination. As described by [Yan et al. (2020)](https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-020-1929-3), base quality should be high although may drop slightly at the 3' end, while GC content and read length should be consistent with the expected values. For paired-end reads, run fastqc on both files, with the results output to the current directory:
@@ -95,6 +110,9 @@ The post-alignment QC involves several steps:
 - [Remove unmapped, multi-mapped and duplicates reads and estimate library complexity](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates-optional)
+
+
+[ENCODE](https://www.encodeproject.org/chip-seq/histone/) requires library complexity to be measured using the Non-Redundant Fraction (NRF) and PCR Bottlenecking Coefficients 1 and 2, or PBC1 and PBC2. Preferred values are as follows: NRF\>0.9, PBC1\>0.9, and PBC2\>10.
 
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
 
@@ -172,11 +190,12 @@ bamCompare --scaleFactorsMethod readCount --ignoreForNormalization chrX --blackL
 
 ## Peak calling
 
-The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call narrow or broad peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/) shows the categories of histone-peak types.
+The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call narrow or broad peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), shows the categories of histone-peak types. H3K9me3 is an exception as it is enriched in repetitive regions of the genome.
 
 <img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/broad-vs-narrow-histones-ENCODE.png" width="600">
 
-According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/histone/), narrow-peak histone experiments should have at least 20 million usable fragments, while broad-histone experiments should have at least 45 million usable fragments. 
+According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/histone/), **narrow-peak** histone experiments should have **at least 20 million usable fragments**, while **broad-peak** histone experiments should have at least **45 million usable fragments**. 
+
 
 
 ```bash
