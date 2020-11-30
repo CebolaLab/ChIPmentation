@@ -156,6 +156,9 @@ To visualise the input and data tracks:
 #2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable
 #Edit <sample>.shifted.bam to <sample>.blacklist-filtered.bam if you did not run the coordinate shifting
 bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
+
+#Repeat for the input control
+bamCoverage --bam <sample>.input.bam -o <sample>.input.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
 ```
 
 To generate a data track normalised to the input:
