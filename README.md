@@ -47,7 +47,7 @@ The output of fastp includes a html report, part of which is shown below. This p
 
 ## Alignment
 
-The processed reads should then be aligned to the reference human genome using an aligner such as [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). This pipeline will use bowtie2 to align reads to the hg19 reference genome. If the user is aligning to the more recent GRCh38 release, it is recommended to remove alternative contigs, otherwise reads may not map uniquely and will be assigned a low quality score. Suggested guidelines for preparing the GRCh38 genome are discussed in [this tutorial](https://www.biostars.org/p/342482/). If the user selects an alternative alignment tool, such as bwa, they are referred to [this blog post](https://www.acgt.me/?offset=1426809676847) which discusses the resulting differences in alignment quality scores.
+The processed reads should then be aligned to the reference human genome using an aligner such as [bowtie2](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml). This pipeline will use bowtie2 to align reads to the GRCh38 reference genome. If the user is aligning to the more recent GRCh38 release, it is recommended to remove alternative contigs, otherwise reads may not map uniquely and will be assigned a low quality score. Suggested guidelines for preparing the GRCh38 genome are discussed in [this tutorial](https://www.biostars.org/p/342482/). If the user selects an alternative alignment tool, such as bwa, they are referred to [this blog post](https://www.acgt.me/?offset=1426809676847) which discusses the resulting differences in alignment quality scores.
 
 #### Bowtie2 alignment
 
@@ -64,17 +64,17 @@ wget ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/technical/reference/human_g1k_
 wget ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.gz
 ```
 
-Bowtie2 should be used to create the reference genome index files (see the bowtie2 [manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome)). After the index files have been generated, align the trimmed fastq files to the genome (here using hg19/b37). If a sample has been sequenced across multiple lanes, assuming the samples are balanced and there are no batch effects, bowtie2 can access multiple files as a comma seperated list:
+Bowtie2 should be used to create the reference genome index files (see the bowtie2 [manual](http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml#indexing-a-reference-genome)). After the index files have been generated, align the trimmed fastq files to the genome (here using GRCh38/hg38). If a sample has been sequenced across multiple lanes, assuming the samples are balanced and there are no batch effects, bowtie2 can access multiple files as a comma seperated list:
 
 ```bash
 #set the bt2idx variable to the directory with the reference genome and indexes
 bt2idx=/path/to/reference-genome
 
 #Run the bowtie2 alignment and output a bam alignment file
-bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 20 -X 700 -x $bt2idx/human_g1k_v37.fasta -1 <sample>_R1.trimmed.fastq.gz -2 <sample>_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
+bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 20 -X 700 -x $bt2idx/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna -1 <sample>_R1.trimmed.fastq.gz -2 <sample>_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
 
 #If your sample was sequenced across multiple lanes, in this case lane 1 (L002) and lane 2 (L003):
-#bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 35 -X 700 -x $bt2idx/human_g1k_v37.fasta -1 <sample>_L001_R1.trimmed.fastq.gz,<sample>_L002_R1.trimmed.fastq.gz -2 <sample>_L001_R2.trimmed.fastq.gz,<sample>_L002_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
+#bowtie2 --local --very-sensitive --no-mixed --no-discordant -I 35 -X 700 -x $bt2idx/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna -1 <sample>_L001_R1.trimmed.fastq.gz,<sample>_L002_R1.trimmed.fastq.gz -2 <sample>_L001_R2.trimmed.fastq.gz,<sample>_L002_R2.trimmed.fastq.gz | samtools view -bS - > <sample>.bam
 ```
 
 The output `bam` file should be sorted and indexed prior to the downstream analysis:
@@ -91,7 +91,7 @@ samtools index <sample>_sorted.bam
 
 The post-alignment QC involves several steps:
 
-- [Remove duplicates & low-quality alignments and estimate library complexity](#removed-unmapped,-multi-mapped-and-duplicates-reads-and-estimate-library-complexity) (including non-uniquely mapped reads)
+- [Remove unmapped, multi-mapped and duplicates reads and estimate library complexity](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates)
 
@@ -114,10 +114,10 @@ samtools index <sample>.rmdup.bam
 
 ### Remove ENCODE blacklist regions
 
-The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most recently reported by [Amemiya et al. (2019)](https://www.nature.com/articles/s41598-019-45839-z) are defined as 'a comprehensive set of regions in the human, mouse, worm, and fly genomes that have anomalous, unstructured, or high signal in next-generation sequencing experiments independent of cell line or experiment.' These problematic regions should be removed before further analysis. Download the blacklist files for your chosen reference genome from the [Boyle Lab github repository](https://github.com/Boyle-Lab/Blacklist/tree/master/lists). Details regarding the identification of blacklist regions are reported [here](https://github.com/Boyle-Lab/Blacklist/blob/master/lists/hg19-blacklist-README.pdf).
+The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most recently reported by [Amemiya et al. (2019)](https://www.nature.com/articles/s41598-019-45839-z) are defined as 'a comprehensive set of regions in the human, mouse, worm, and fly genomes that have anomalous, unstructured, or high signal in next-generation sequencing experiments independent of cell line or experiment.' These problematic regions should be removed before further analysis. Download the blacklist files for your chosen reference genome from the [Boyle Lab github repository](https://github.com/Boyle-Lab/Blacklist/tree/master/lists). Details regarding the identification of blacklist regions are reported [here](https://github.com/Boyle-Lab/Blacklist/tree/master/lists).
 
 ```bash
-bedtools intersect -nonamecheck -v -abam <sample>.rmdup.bam -b hg19-blacklist.v2.bed > <sample>.blacklist-filtered.bam
+bedtools intersect -nonamecheck -v -abam <sample>.rmdup.bam -b hg38-blacklist.v2.bed > <sample>.blacklist-filtered.bam
 ```
 
 ### Shift read coordinates
@@ -140,6 +140,28 @@ samtools index -@ 8 <sample>.shifted.bam
 rm <sample>.tmp.bam
 ```
 
+## Alignment visualisation
+
+The `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file is normalised to. The `bamCompare` tool from the `deeptools` package will be used. 
+
+To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated, a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
+
+```bash
+#RPGC is reads per genome coverage
+#2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable. 
+bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg19-blacklist.v2.bed
+```
+
+To generate a data track normalised to the input:
+
+```bash
+#Add -p to specify the number of processors to use
+#–ignoreForNormalization chrX chrM may be useful if samples have uneven coverage across the sex chromosomes
+#--scaleFactorsMethod readCount or --normaliseUsing BPM ? 
+bamCompare --scaleFactorsMethod readCount --blackListFileName hg19-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
+```
+
+
 ## Peak calling
 
 The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. 
@@ -158,14 +180,6 @@ The ChIPmentaion paper uses MACS2 with:
 	Bandwideth of 200bp and matched IgG control as background. 
 
 For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
-
-
-## Visualisation
-
-The following code can be used to generate log<sub>10</sub> p-value tracks from the output of MACS peak calling. With ChIP-seq data, each sample should have a control input, which the data is normalised to. 
-
-
-- Genome browser tracks - genomeCoverageBed command in BEDTools and bedGraphToBigWig tool (UCSC) was used to produce a bigWig file
 
 ## Peak Quality Control
 
