@@ -130,7 +130,7 @@ The following command will remove unmapped reads and secondary alignments `samto
 
 ```bash
 #Sort by order, fixmate and remove unmapped/multi-mapped reads, sort by coordinate, mark and remove duplicates and estimate library complexity
-samtools sort -n <sample>_sorted.bam - | samtools fixmate -rcm - - | samtools sort - | samtools markdup -d 100 -r -f <sample>.markdup.stats - <sample>.rmdup.bam
+samtools sort -n <sample>_sorted.bam | samtools fixmate -rcm - - | samtools sort - | samtools markdup -d 100 -r -f <sample>.markdup.stats - <sample>.rmdup.bam
 
 #Index the resulting bam file
 samtools index <sample>.rmdup.bam
