@@ -172,7 +172,12 @@ bamCompare --scaleFactorsMethod readCount --ignoreForNormalization chrX --blackL
 
 ## Peak calling
 
-The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. 
+The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call narrow or broad peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/) shows the categories of histone-peak types.
+
+<img src="https://github.com/CebolaLab/RNA-seq/blob/master/Figures/broad-vs-narrow-histones-ENCODE.png" width="600">
+
+According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/histone/), narrow-peak histone experiments should have at least 20 million usable fragments, while broad-histone experiments should have at least 45 million usable fragments. 
+
 
 ```bash
 macs2 callpeak -t <sample>.shifted.bam
