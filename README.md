@@ -98,9 +98,9 @@ The post-alignment QC involves several steps:
 
 ### Removed unmapped reads, multi-mapped reads and duplicates and estimate library complexity
 
-The following command will remove unmapped reads and secondary alignments `samtools fixmate -r` and remove duplicate reads `samtools markdup -r`. The `samtools markdup` will also estimate library complexity, with the output saved in the `<sample>.markdup.stats` file.
+*A note on sam file flags:* the output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which can map to more than one position are assigned a low quality scores. The user can assess the proportion of uniquely mapped reads (prior to the filtering step above) using `samtools -view -q 30 -c <sample_sorted.bam` (divide this number of reads by 2 to calculate the number of DNA fragments). In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). *A low % of uniquely mapped reads* may result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). 
 
-*A note on sam file flags:* the output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which can map to more than one position are assigned a low quality scores. The user can assess the proportion of uniquely mapped reads (prior to the filtering step above) using `samtools -view -q 30 -c <sample_sorted.bam` (divide this number of reads by 2 to calculate the number of DNA fragments). In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). 
+The following command will remove unmapped reads and secondary alignments `samtools fixmate -r` and mark and remove duplicate reads `samtools markdup -r`. The `samtools markdup` will also estimate library complexity, with the output saved in the `<sample>.markdup.stats` file.
 
 ```bash
 samtools sort -o <sample>_sorted.bam - | samtools fixmate -rcm - - | samtools sort - | samtools markdup -d 100 -r -f <sample>.markdup.stats - <sample>.rmdup.bam
@@ -108,13 +108,9 @@ samtools sort -o <sample>_sorted.bam - | samtools fixmate -rcm - - | samtools so
 samtools index <sample>.rmdup.bam
 ```
 
-*A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads (the second option below) to increase confidence and reproducibility:
+*A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads to increase confidence and reproducibility:
 
 *Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
-
-*A low % of uniquely mapped reads* may result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). 
-
-The following code uses the `sam/bam` flags to retain properly mapped pairs (`-f 2`) and to remove reads which fail the platform/vendor QC checks (`-F 512`), duplicate reads (`-F 1024`) and those which are unmapped (`-F 12`). The three flags to be removed can be combined into `-F 1548`, which will remove reads which meet any of the three individual flags.
 
 
 ### Remove ENCODE blacklist regions
@@ -122,7 +118,7 @@ The following code uses the `sam/bam` flags to retain properly mapped pairs (`-f
 The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most recently reported by [Amemiya et al. (2019)](https://www.nature.com/articles/s41598-019-45839-z) are defined as 'a comprehensive set of regions in the human, mouse, worm, and fly genomes that have anomalous, unstructured, or high signal in next-generation sequencing experiments independent of cell line or experiment.' These problematic regions should be removed before further analysis. Download the blacklist files for your chosen reference genome from the [Boyle Lab github repository](https://github.com/Boyle-Lab/Blacklist/tree/master/lists). Details regarding the identification of blacklist regions are reported [here](https://github.com/Boyle-Lab/Blacklist/blob/master/lists/hg19-blacklist-README.pdf).
 
 ```bash
-bedtools intersect -nonamecheck -v -abam <sample>.filtered.bam -b hg19-blacklist.v2.bed > <sample>.blacklist-filtered.bam
+bedtools intersect -nonamecheck -v -abam <sample>.rmdup.bam -b hg19-blacklist.v2.bed > <sample>.blacklist-filtered.bam
 ```
 
 ### Shift read coordinates
