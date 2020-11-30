@@ -102,8 +102,10 @@ The post-alignment QC involves several steps:
 The following command will remove unmapped reads and secondary alignments `samtools fixmate -r` and mark and remove duplicate reads `samtools markdup -r`. The `samtools markdup` will also estimate library complexity, with the output saved in the `<sample>.markdup.stats` file.
 
 ```bash
+#Sort by order, fixmate and remove unmapped/multi-mapped reads, sort by coordinate, mark and remove duplicates and estimate library complexity
 samtools sort -o <sample>_sorted.bam - | samtools fixmate -rcm - - | samtools sort - | samtools markdup -d 100 -r -f <sample>.markdup.stats - <sample>.rmdup.bam
 
+#Index the resulting bam file
 samtools index <sample>.rmdup.bam
 ```
 
