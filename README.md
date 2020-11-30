@@ -149,19 +149,18 @@ The `<sample>.blacklist-filtered.bam` or `<sample>.shifted.bam` file can be conv
 To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated, a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
 
 ```bash
-#RPGC is reads per genome coverage.
-#2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable. 
-#Edit <sample>.shifted.bam to <sample>.blacklist-filtered.bam if you did not run the coordinate shifting.
+#RPGC is reads per genome coverage
+#2862010578 is the effective genome size for GRCh38 when using 150bp reads and including only regions which are uniquely mappable
+#Edit <sample>.shifted.bam to <sample>.blacklist-filtered.bam if you did not run the coordinate shifting
 bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
 ```
 
 To generate a data track normalised to the input:
 
 ```bash
-#Add -p to specify the number of processors to use.
-#–ignoreForNormalization chrX chrM may be useful if samples have uneven coverage across the sex chromosomes.
+#Add -p to specify the number of processors to use
 #--scaleFactorsMethod readCount or --normaliseUsing BPM ? 
-bamCompare --scaleFactorsMethod readCount --blackListFileName hg38-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
+bamCompare --scaleFactorsMethod readCount --ignoreForNormalization chrX --blackListFileName hg38-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
 ```
 
 
