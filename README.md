@@ -26,7 +26,7 @@ For uniformity of experiments, it is recommended that:
 
 The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), detailed the outputs:
 
-<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/outputs-ENCODE.png" width="600">
+<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/outputs-ENCODE.png" width="700">
 
 In addition, this pipeline will cover differential binding analysis, functional analysis and motif discovery. 
 
