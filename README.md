@@ -117,6 +117,7 @@ samtools index <sample>.rmdup.bam
 The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most recently reported by [Amemiya et al. (2019)](https://www.nature.com/articles/s41598-019-45839-z) are defined as 'a comprehensive set of regions in the human, mouse, worm, and fly genomes that have anomalous, unstructured, or high signal in next-generation sequencing experiments independent of cell line or experiment.' These problematic regions should be removed before further analysis. Download the blacklist files for your chosen reference genome from the [Boyle Lab github repository](https://github.com/Boyle-Lab/Blacklist/tree/master/lists). Details regarding the identification of blacklist regions are reported [here](https://github.com/Boyle-Lab/Blacklist/tree/master/lists).
 
 ```bash
+#Remove reads within blacklist regions
 bedtools intersect -nonamecheck -v -abam <sample>.rmdup.bam -b hg38-blacklist.v2.bed > <sample>.blacklist-filtered.bam
 ```
 
