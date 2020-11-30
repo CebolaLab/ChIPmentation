@@ -145,9 +145,11 @@ rm <sample>.tmp.bam
 
 ## Alignment visualisation
 
-The `<sample>.blacklist-filtered.bam` or `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file is normalised to. The `bamCompare` tool from the `deeptools` package will be used. 
+The `<sample>.blacklist-filtered.bam` or `<sample>.shifted.bam` file can be converted to a `BigWig` file to visualise the alignment as a track in a genome browser, such as UCSC. For ChIP-seq, each sample is expected to have a control 'input' sample, which the aligned `bam` file may be normalised to. 
 
-To visualise the input and data tracks, use `bamCoverage`. The input requires the effective genome size to be estimated; a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome.
+The input to `bamCoverage` (see below) requires the effective genome size to be estimated; a table is provided [at this link](https://deeptools.readthedocs.io/en/latest/content/feature/effectiveGenomeSize.html). Select the appropriate value depending on the read length and reference genome. 
+
+To visualise the input and data tracks:
 
 ```bash
 #RPGC is reads per genome coverage
