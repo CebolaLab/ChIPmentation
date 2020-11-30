@@ -101,7 +101,7 @@ The post-alignment QC involves several steps:
 To mark duplicate reads and view the % of duplicates:
 
 ```bash
-picard MarkDuplicates QUIET=true INPUT=<sample>.rmChrM.bam OUTPUT=<sample>.marked.bam METRICS_FILE=<sample>.dup.metrics REMOVE_DUPLICATES=false CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT TMP_DIR=.
+picard MarkDuplicates QUIET=true INPUT=<sample>_sorted.bam OUTPUT=<sample>.marked.bam METRICS_FILE=<sample>.dup.metrics REMOVE_DUPLICATES=false CREATE_INDEX=true VALIDATION_STRINGENCY=LENIENT TMP_DIR=.
 
 #View the % of duplicates
 head -n 8 <sample>.dup.metrics | cut -f 7,9 | grep -v ^# | tail -n 2
