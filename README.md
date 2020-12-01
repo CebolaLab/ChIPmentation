@@ -17,7 +17,7 @@ According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the curr
 - For broad-peak histone experiments, each replicate should have 45 million usable fragments.
 - Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
 
-This GitHub repository contains an excel spreadsheet with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/).
+This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/).
 
 For uniformity of experiments, it is recommended that:
 
