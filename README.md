@@ -274,13 +274,9 @@ Following peak calling by MACS2, two bigWig tracks should be generated which can
 #Generate the p-value bedGraph
 macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
 
-#Sort the bedGraph file
+#Sort the bedGraph file and convert it to bigWig using the hg38 chromosome sizes
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
-
-#Obtain a file detailing the sizes of the reference genome chromosomes
 fetchChromSizes hg38 > hg38.chrom.sizes
-
-#Convert to bigWig
 bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
 ```
 
