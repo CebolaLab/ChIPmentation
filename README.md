@@ -57,6 +57,8 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
+The fastQC report details the total number of reads for the sample. ***This value can be input into the QC spreadsheet.***
+
 ### Adapter trimming 
 
 Adapters and low quality reads/bases should be trimmed using one of several programs, such as [trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic), [cutadapt](https://cutadapt.readthedocs.io/en/stable/), or [fastp](https://github.com/OpenGene/fastp). Adapter contamination can be seen in the fastqc report:
@@ -72,7 +74,7 @@ fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fas
 #If using single-end data, refer to the fastp manual. The --detect_adapter_for_pe argument should be removed and the adapter sequence should be provided.
 ```
 
-The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
+The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. ***This percentage can be input into the QC spreadsheet.*** The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
 
 <img src="https://github.com/CebolaLab/ATAC-seq/blob/master/Figures/fastp-html.png" width="600">
 
