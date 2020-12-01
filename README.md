@@ -38,9 +38,8 @@ In addition, this pipeline will cover differential binding analysis, functional 
 - [Alignment](#alignment): align to the reference genome
 - [Post-alignment QC](#post-alignment-qc): filter, check library complexity and format for peak calling
 - [Alignment visualisation](#alignment-visualisation): generate BigWig tracks from the aligned bam file
-- [Peak calling](#peak-calling): relaxed (per replicate) and replicated (pooled replicates) peaks 
+- [Peak calling](#peak-calling): call relaxed (per replicate) and replicated (pooled replicates) peaks and generate -log<sub>10</sub> *p*-value and fold-enrichment bigWig trakcs
 - [Peak quality control](#peak-quality-control): calculate QC scores including fraction of reads in peaks (FRiP)
-- [Peak and p-value visualisation](#peak-and-p-value-visualisation): generate BigWig tracks and peak files
 - [Differential binding analysis](#differntial-binding)
 - Functional analysis & Motif Discovery
 
@@ -235,7 +234,7 @@ According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/hist
 
 A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html).
 
-**Call peaks for individual replicates:**
+### Call peaks for individual replicates
 
 ```bash
 macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>-macs2.log
@@ -297,7 +296,7 @@ bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pva
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_pval.bw`
 
-**Call peaks for pooled replicates:**
+### Call peaks for pooled replicates
 
 The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined, replicated set of peaks for the pooled replicates. 
 
