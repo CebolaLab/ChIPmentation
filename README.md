@@ -168,7 +168,7 @@ samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
 #The first value gives the total number of reads
 ```
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+): input the NRF score into the QC spreadsheet.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the NRF score into the QC spreadsheet.
 
 
 ### Remove ENCODE blacklist regions
