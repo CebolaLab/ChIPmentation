@@ -170,19 +170,6 @@ samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the NRF score into the QC spreadsheet.
 
-**Calculate the PCR Bottlenecking Coefficient (PBC) scores**:
-
-PBC1 = M<sub>1</sub>/M<sub>DISTINCT</sub> where:
-- M<sub>1</sub>: number of genomic locations where exactly one read maps uniquely
-- M<sub>DISTINCT</sub> : number of distinct genomic locations to which some read maps uniquely
-
-PBC2 = M<sub>1</sub>/M<sub>2</sub> where:
-- M1: number of genomic locations where only one read maps uniquely
-- M2: number of genomic locations where two reads map uniquely
-
-<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/PBC-standards.png" width="600">
-
-
 ### Remove ENCODE blacklist regions
 
 The [ENCODE blacklist regions](https://github.com/Boyle-Lab/Blacklist/), most recently reported by [Amemiya et al. (2019)](https://www.nature.com/articles/s41598-019-45839-z) are defined as 'a comprehensive set of regions in the human, mouse, worm, and fly genomes that have anomalous, unstructured, or high signal in next-generation sequencing experiments independent of cell line or experiment.' These problematic regions should be removed before further analysis. Download the blacklist files for your chosen reference genome from the [Boyle Lab github repository](https://github.com/Boyle-Lab/Blacklist/tree/master/lists). Details regarding the identification of blacklist regions are reported [here](https://github.com/Boyle-Lab/Blacklist/tree/master/lists).
