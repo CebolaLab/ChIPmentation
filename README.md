@@ -241,7 +241,7 @@ A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctrainin
 macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>-macs2.log
 ```
 
-Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the original ChIPmentation paper by [Schmidl et al. 2015](https://www.nature.com/articles/nmeth.3542) are `--broad --nomodel --extsize 73 --pvalue 1e-3`.
+Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the original ChIPmentation paper by [Schmidl et al. (2015)](https://www.nature.com/articles/nmeth.3542) are `--broad --nomodel --extsize 73 --pvalue 1e-3`.
 
 The output files:
 
@@ -252,9 +252,9 @@ The output files:
 - `_control_lambda.bdg`: bedGraph format for the input sample
 - `_treat_pileup.bdg`: bedGraph format for the treatment sample
 
-![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: the `<sample>_peaks.narrowPeak` is a `bed` file containing the peak information
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: the `<sample>_peaks.narrowPeak` is a `bed` file containing the peak information for the INDIVIDUAL replicate\*.
 
-The `<sample>_peaks.narrowPeak` can be uploaded and visualised via a genome browser such as UCSC. \*The `bed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
+\*The `<sample>_peaks.narrowPeak` can be uploaded and visualised via a genome browser such as UCSC. The `bed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
 
 The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
