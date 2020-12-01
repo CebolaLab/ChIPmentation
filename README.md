@@ -17,7 +17,7 @@ According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the curr
 - For broad-peak histone experiments, each replicate should have 45 million usable fragments.
 - Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
 
-This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/).
+This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline.
 
 For uniformity of experiments, it is recommended that:
 
@@ -38,7 +38,7 @@ In addition, this pipeline will cover differential binding analysis, functional 
 - [Alignment](#alignment) 
 - [Post-alignment QC](#post-alignment-qc) - filter, check library complexity and format for peak calling
 - [Alignment visualisation](#alignment-visualisation)
-- [Peak calling](#peak-calling)
+- [Peak calling](#peak-calling) - relaxed (per replicate) and replicated (pooled replicates) peaks 
 - [Peak quality control](#peak-quality-control)
 - [Peak and p-value visualisation](#peak-and-p-value-visualisation)
 - [Differential binding analysis](#differntial-binding)
