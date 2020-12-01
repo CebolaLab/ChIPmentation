@@ -57,7 +57,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** the fastQC report details the total number of reads for the sample. This value can be input into the QC spreadsheet.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** the fastQC report details the total number of reads for the sample. This value can be input into the QC spreadsheet. (If using paired-end reads, divide by 2 for the number of fragments).
 
 ### Adapter trimming 
 
@@ -151,11 +151,13 @@ samtools index <sample>.rmdup.bam
 *Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
 
 
-**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads.
+**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads. Note the number of DNA reads is 2x the number of DNA fragments 
 
 ```bash
 #Generate a stats report detailing the total number of fragments following filtering
-samtools idxstats <sample>.rmdup.bam > <sample>.rmdup.idxstats
+samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
+
+#The first value gives the total number of reads
 ```
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+): input the NRF score into the QC spreadsheet.
