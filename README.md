@@ -34,13 +34,13 @@ In addition, this pipeline will cover differential binding analysis, functional 
 
 ## Table of Contents
 
-- [Pre-alignment quality control (QC)](#pre-alignment-qc) 
-- [Alignment](#alignment) 
-- [Post-alignment QC](#post-alignment-qc) - filter, check library complexity and format for peak calling
-- [Alignment visualisation](#alignment-visualisation)
-- [Peak calling](#peak-calling) - relaxed (per replicate) and replicated (pooled replicates) peaks 
-- [Peak quality control](#peak-quality-control)
-- [Peak and p-value visualisation](#peak-and-p-value-visualisation)
+- [Pre-alignment quality control (QC)](#pre-alignment-qc): trim reads
+- [Alignment](#alignment): align to the reference genome
+- [Post-alignment QC](#post-alignment-qc): filter, check library complexity and format for peak calling
+- [Alignment visualisation](#alignment-visualisation): generate BigWig tracks from the aligned bam file
+- [Peak calling](#peak-calling): relaxed (per replicate) and replicated (pooled replicates) peaks 
+- [Peak quality control](#peak-quality-control): calculate QC scores including fraction of reads in peaks (FRiP)
+- [Peak and p-value visualisation](#peak-and-p-value-visualisation): generate BigWig tracks and peak files
 - [Differential binding analysis](#differntial-binding)
 - Functional analysis & Motif Discovery
 
