@@ -57,7 +57,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-The fastQC report details the total number of reads for the sample. ***This value can be input into the QC spreadsheet.***
+The fastQC report details the total number of reads for the sample. \***This value can be input into the QC spreadsheet.**\*
 
 ### Adapter trimming 
 
