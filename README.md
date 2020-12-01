@@ -237,7 +237,7 @@ A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctrainin
 ### Call peaks for individual replicates
 
 ```bash
-macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>-macs2.log
+macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>_macs2.log
 ```
 
 Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the original ChIPmentation paper by [Schmidl et al. (2015)](https://www.nature.com/articles/nmeth.3542) are `--broad --nomodel --extsize 73 --pvalue 1e-3`.
@@ -286,7 +286,7 @@ bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
 
 ```bash
 #Generate the p-value bedGraph
-macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
+macs2 bdgcmp -t <sample>.shifted.bam -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
 
 #Sort the bedGraph file and convert it to bigWig using the hg38 chromosome sizes
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
@@ -298,7 +298,12 @@ bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pva
 
 ### Call peaks for pooled replicates
 
-The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined, replicated set of peaks for the pooled replicates. 
+The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practise requires a combined set of peaks for the pooled replicates to be called. Assuming there are two replicates, `rep1` and `rep2`:
+
+```bash
+macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -g 2862010578 -n <sample> -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
+```
+
 
 ## Peak quality control
 
