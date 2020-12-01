@@ -150,7 +150,7 @@ samtools index <sample>.rmdup.bam
 
 From the `<sample>.markdup.stats` file:
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by diving the *duplicate total* by the number *READ*. Input to the spreadsheet.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by dividing the *duplicate total* by the number *READ*. Input to the spreadsheet.
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
@@ -169,6 +169,18 @@ samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
 ```
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the NRF score into the QC spreadsheet.
+
+**Calculate the PCR Bottlenecking Coefficient (PBC) scores**:
+
+PBC1 = M<sub>1</sub>/M<sub>DISTINCT</sub> where:
+- M<sub>1</sub>: number of genomic locations where exactly one read maps uniquely
+- M<sub>DISTINCT</sub> : number of distinct genomic locations to which some read maps uniquely
+
+PBC2 = M<sub>1</sub>/M<sub>2</sub> where:
+- M1: number of genomic locations where only one read maps uniquely
+- M2: number of genomic locations where two reads map uniquely
+
+<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/PBC-standards.png" width="600">
 
 
 ### Remove ENCODE blacklist regions
