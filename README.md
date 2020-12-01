@@ -76,7 +76,7 @@ fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fas
 
 The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
 
-- ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) \***QC value**\*: input the % of trimmed reads to the QC spreadsheet. 
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of trimmed reads to the QC spreadsheet. 
 
 <img src="https://github.com/CebolaLab/ATAC-seq/blob/master/Figures/fastp-html.png" width="600">
 
