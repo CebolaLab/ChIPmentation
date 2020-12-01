@@ -254,7 +254,7 @@ The output files:
 
 The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks for the individual replicate.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks into the QC spreadsheet.
 
 **Call peaks for pooled replicates:**
 
@@ -266,13 +266,13 @@ To assess the quality of our peaks, we will use the *R* package ChIPQC as descri
 
 ## Peak and p-value visualisation
 
-Following peak calling by MACS2, two bigWig tracks should be generated, which can be uploaded and visualised in a genome browser such as UCSC. `macs2 bdgcmp` is used for this.
+Following peak calling by MACS2, two bigWig tracks should be generated which can be uploaded and visualised in a genome browser such as UCSC. 
 
 ***p*-value track:** the resulting bigWig track will contain the -log<sub>10</sub> *p*-value representing the significant enrichment of the ChIP-seq signal over the background.
 
 ```bash
 #Generate the p-value bedGraph
-macs2 bdgcmp -t <sample>.broad_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
+macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
 
 #Sort the bedGraph file
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
@@ -288,7 +288,7 @@ bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pva
 
 ```bash
 #Generate the fold-change bedGraph
-macs2 bdgcmp -t <sample>.broad_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
+macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
 
 #Sort the bedGraph file
 sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
