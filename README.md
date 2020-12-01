@@ -233,22 +233,27 @@ The ChIP-seq peaks, either of histone marks or protein binding, will be called u
 
 According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/histone/), **narrow-peak** histone experiments should have **at least 20 million usable fragments**, while **broad-peak** histone experiments should have at least **45 million usable fragments**. 
 
-
+A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html).
 
 ```bash
-macs2 callpeak -t <sample>.shifted.bam
+macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>-macs2.log
 ```
 
+Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the original ChIPmentation paper by [Schmidl et al. 2015](https://www.nature.com/articles/nmeth.3542) are `--broad --nomodel --extsize 73 --pvalue 1e-3`.
 
-MACSs - broad for histone marks, narrow for transcription factors. 
+The output files:
 
-The ChIPmentaion paper uses MACS2 with:
+- `_peaks.narrowPeak`: a BED6+4 file detailing the peak locations, along wit the peak summits, *p*-value and *q*-values 
+- `_peaks.xls`: a tabular file containing addition information, such as pileup and fold-encirhment.
+- `_summits.bed`: the locations of the summits for all peaks. 
+- `_model.R`: an R script used to plot a PDF model based on your data and cross-correlation plot
+- `_control_lambda.bdg`: bedGraph format for the input sample
+- `_treat_pileup.bdg`: bedGraph format for the treatment sample
 
-- Peak-calling with MACS2. 
-	Independently for biological replicates.
-	Bandwideth of 200bp and matched IgG control as background. 
+The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
-For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks for the individual replicate.
+
 
 ## Peak quality control
 
