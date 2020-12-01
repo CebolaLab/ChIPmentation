@@ -57,7 +57,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-\***QC value:**\* the fastQC report details the total number of reads for the sample. This value can be input into the QC spreadsheet.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** the fastQC report details the total number of reads for the sample. This value can be input into the QC spreadsheet.
 
 ### Adapter trimming 
 
@@ -126,12 +126,10 @@ samtools index <sample>_sorted.bam
 
 The post-alignment QC involves several steps:
 
-- [Remove unmapped, multi-mapped and duplicates reads and estimate library complexity](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
+- [Remove unmapped, multi-mapped and duplicates reads](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates-optional)
-
-
-[ENCODE](https://www.encodeproject.org/chip-seq/histone/) requires library complexity to be measured using the Non-Redundant Fraction (NRF) and PCR Bottlenecking Coefficients 1 and 2, or PBC1 and PBC2. Preferred values are as follows: NRF\>0.9, PBC1\>0.9, and PBC2\>10.
+- Estimate library complexity and calculate calculate NRF (non-redundant fraction), PBC1, PBC2 (PCR bottleneck coefficient).
 
 
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
@@ -151,6 +149,16 @@ samtools index <sample>.rmdup.bam
 *A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads to increase confidence and reproducibility:
 
 *Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
+
+
+**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads.
+
+```bash
+#Generate a stats report detailing the total number of fragments following filtering
+samtools idxstats <sample>.rmdup.bam > <sample>.rmdup.idxstats
+```
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+): input the NRF score into the QC spreadsheet.
 
 
 ### Remove ENCODE blacklist regions
