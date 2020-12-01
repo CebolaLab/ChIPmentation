@@ -1,6 +1,6 @@
-# Analysis pipeline for ChIPmentaion data
+# Analysis pipeline for ChIPmentaion data for histones
 
-A step-by-step analysis pipeline for ChIP-seq data using the ChIPmentaion protocol from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
+A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
 
 Correspondence: hannah.maude12@imperial.ac.uk
 
@@ -235,6 +235,8 @@ According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/hist
 
 A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html).
 
+**Call peaks for individual replicates:**
+
 ```bash
 macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>-macs2.log
 ```
@@ -254,12 +256,46 @@ The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks for the individual replicate.
 
+**Call peaks for pooled replicates:**
+
+The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined set of peaks for the pooled replicates. 
 
 ## Peak quality control
 
-To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard hbctraining. 
+To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard Chan Bioinformatics Core.
 
 ## Peak and p-value visualisation
+
+Following peak calling by MACS2, two bigWig tracks should be generated, which can be uploaded and visualised in a genome browser such as UCSC. `macs2 bdgcmp` is used for this.
+
+***p*-value track:** the resulting bigWig track will contain the -log<sub>10</sub> *p*-value representing the significant enrichment of the ChIP-seq signal over the background.
+
+```bash
+#Generate the p-value bedGraph
+macs2 bdgcmp -t <sample>.broad_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppois --o <sample>_ppois.bdg
+
+#Sort the bedGraph file
+sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
+
+#Obtain a file detailing the sizes of the reference genome chromosomes
+fetchChromSizes hg38 > hg38.chrom.sizes
+
+#Convert to bigWig
+bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
+```
+
+**Fold-change track:** the resulting bigWig track will contain the fold-enrichment of the treatment over the background. The `-m FE` option specifies that fold-enrichment should be calculated.  
+
+```bash
+#Generate the fold-change bedGraph
+macs2 bdgcmp -t <sample>.broad_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
+
+#Sort the bedGraph file
+sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
+
+#Convert to bigWig
+bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
+```
 
 
 ## Differential binding
