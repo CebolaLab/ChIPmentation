@@ -290,10 +290,8 @@ bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pva
 #Generate the fold-change bedGraph
 macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
 
-#Sort the bedGraph file
+#Sort the bedGraph file and convert to bigWig
 sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
-
-#Convert to bigWig
 bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
 ```
 
