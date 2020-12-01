@@ -265,19 +265,22 @@ From these output files, we will generate:
 
 \*The `bed/bigBed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
 
-**Call peaks for pooled replicates:**
 
-The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined set of peaks for the pooled replicates. 
+**1. bed/bigBed of peak calls**
 
-## Peak quality control
 
-To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard Chan Bioinformatics Core.
+**2. Fold-enrichment bigWig**
 
-## Peak and p-value visualisation
+```bash
+#Generate the fold-change bedGraph
+macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
 
-Following peak calling by MACS2, two bigWig tracks should be generated which can be uploaded and visualised in a genome browser such as UCSC. 
+#Sort the bedGraph file and convert to bigWig
+sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
+bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
+```
 
-***p*-value track:** the resulting bigWig track will contain the -log<sub>10</sub> *p*-value representing the significant enrichment of the ChIP-seq signal over the background.
+**2. -log<sub>10</sub> *p*-value bigWig**
 
 ```bash
 #Generate the p-value bedGraph
@@ -289,16 +292,14 @@ fetchChromSizes hg38 > hg38.chrom.sizes
 bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
 ```
 
-**Fold-change track:** the resulting bigWig track will contain the fold-enrichment of the treatment over the background. The `-m FE` option specifies that fold-enrichment should be calculated.  
+**Call peaks for pooled replicates:**
 
-```bash
-#Generate the fold-change bedGraph
-macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -o <sample>_FE.bdg 
+The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined set of peaks for the pooled replicates. 
 
-#Sort the bedGraph file and convert to bigWig
-sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
-bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
-```
+## Peak quality control
+
+To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard Chan Bioinformatics Core.
+
 
 
 ## Differential binding
