@@ -17,7 +17,7 @@ According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the curr
 - For broad-peak histone experiments, each replicate should have 45 million usable fragments.
 - Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
 
-This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline (indicated by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)).
+This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline (indicated by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+)). A blue box ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) will indicate where the expected output files are generated. 
 
 For uniformity of experiments, it is recommended that:
 
@@ -252,6 +252,10 @@ The output files:
 - `_control_lambda.bdg`: bedGraph format for the input sample
 - `_treat_pileup.bdg`: bedGraph format for the treatment sample
 
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: the `<sample>_peaks.narrowPeak` is a `bed` file containing the peak information
+
+The `<sample>_peaks.narrowPeak` can be uploaded and visualised via a genome browser such as UCSC. \*The `bed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
+
 The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks into the QC spreadsheet.
@@ -259,17 +263,11 @@ The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak
 
 From these output files, we will generate:
 
-1. A `bed/bigBed` file of peak calls\*
-2. A `bigWig` track of the fold-enrichment (treatment over the background)
-3. A `bigWig` track of the -log<sub>10</sub> *p*-value (treatment over the background)
-
-\*The `bed/bigBed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
+1. A `bigWig` track of the fold-enrichment (treatment over the background)
+2. A `bigWig` track of the -log<sub>10</sub> *p*-value (treatment over the background)
 
 
-**1. Bed/bigBed of peak calls**
-
-
-**2. Fold-enrichment bigWig**
+**1. Fold-enrichment bigWig**
 
 The following commands require an input file detailing the chromosome sizes. Use the UCSC tool `fetchChromSizes` (install via [conda](https://anaconda.org/bioconda/ucsc-fetchchromsizes)): `fetchChromSizes hg38 > hg38.chrom.sizes`
 
@@ -283,6 +281,8 @@ sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
 bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
 ```
 
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_FE.bw`
+
 **2. -log<sub>10</sub> *p*-value bigWig**
 
 ```bash
@@ -294,6 +294,8 @@ sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
 
 bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
 ```
+
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_pval.bw`
 
 **Call peaks for pooled replicates:**
 
