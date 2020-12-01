@@ -266,10 +266,12 @@ From these output files, we will generate:
 \*The `bed/bigBed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
 
 
-**1. bed/bigBed of peak calls**
+**1. Bed/bigBed of peak calls**
 
 
 **2. Fold-enrichment bigWig**
+
+The following commands require an input file detailing the chromosome sizes. Use the UCSC tool `fetchChromSizes` (install via [conda](https://anaconda.org/bioconda/ucsc-fetchchromsizes)): `fetchChromSizes hg38 > hg38.chrom.sizes`
 
 ```bash
 #Generate the fold-change bedGraph
@@ -277,6 +279,7 @@ macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -
 
 #Sort the bedGraph file and convert to bigWig
 sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
+
 bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
 ```
 
@@ -288,13 +291,13 @@ macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppoi
 
 #Sort the bedGraph file and convert it to bigWig using the hg38 chromosome sizes
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
-fetchChromSizes hg38 > hg38.chrom.sizes
+
 bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
 ```
 
 **Call peaks for pooled replicates:**
 
-The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined set of peaks for the pooled replicates. 
+The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practises involve calling a combined, replicated set of peaks for the pooled replicates. 
 
 ## Peak quality control
 
