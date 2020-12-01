@@ -46,12 +46,15 @@ In addition, this pipeline will cover differential binding analysis, functional 
 
 ### Pre-alignment QC
 
-The raw sequence data should first be assessed for quality. [FastQC reports](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf) can be generated for all samples to assess sequence quality, GC content, duplication rates, length distribution, K-mer content and adapter contamination. As described by [Yan et al. (2020)](https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-020-1929-3), base quality should be high although may drop slightly at the 3' end, while GC content and read length should be consistent with the expected values. For paired-end reads, run fastqc on both files, with the results output to the current directory:
+The raw sequence data should first be assessed for quality. [FastQC reports](https://dnacore.missouri.edu/PDF/FastQC_Manual.pdf) can be generated for all samples to assess sequence quality, GC content, duplication rates, length distribution, K-mer content and adapter contamination. As described by [Yan et al. (2020)](https://genomebiology.biomedcentral.com/track/pdf/10.1186/s13059-020-1929-3), base quality should be high although may drop slightly at the 3' end. The GC content may be expected to vary depending on the ChIP-seq target. For paired-end reads, run fastqc on both files, with the results output to the current directory. These fastQC reports can be combined into one summary report using [multiQC](https://multiqc.info/). 
 
-```
+```bash
+#Generate fastQC reports for the forward and reverse reads
 fastqc <sample>_R1.fastq.gz -d . -o .
-
 fastqc <sample>_R2.fastq.gz -d . -o .
+
+#Combine reports across samples using multiQC
+multiqc *.html
 ```
 
 ### Adapter trimming 
@@ -63,7 +66,10 @@ Adapters and low quality reads/bases should be trimmed using one of several prog
 For this pipeline, fastp is used to remove adapter sequences. The minimum fragment length is set at 20.
 
 ```bash
+#Assuming paired-end reads:
 fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fastq.gz -O <sample>_R2.trimmed.fastq.gz --detect_adapter_for_pe -l 20 -j <sample>.fastp.json -h <sample>.fastp.html
+
+#If using single-end data, refer to the fastp manual. The --detect_adapter_for_pe argument should be removed and the adapter sequence should be provided.
 ```
 
 The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
