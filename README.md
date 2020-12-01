@@ -17,6 +17,8 @@ According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the curr
 - For broad-peak histone experiments, each replicate should have 45 million usable fragments.
 - Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
 
+This GitHub repository contains an excel spreadsheet with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/).
+
 For uniformity of experiments, it is recommended that:
 
 - The read length should be a minimum of 50 base pairs, though longer read lengths are encouraged; the pipeline can process read lengths as low as 25 base pairs. Sequencing may be paired- or single-ended.
