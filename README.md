@@ -245,7 +245,7 @@ Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the or
 
 The output files:
 
-- `_peaks.narrowPeak`: a BED6+4 file detailing the peak locations, along wit the peak summits, *p*-value and *q*-values 
+- `_peaks.narrowPeak`: a BED6+4 file detailing the peak locations, along with the peak summits, *p*-value and *q*-values 
 - `_peaks.xls`: a tabular file containing addition information, such as pileup and fold-encirhment.
 - `_summits.bed`: the locations of the summits for all peaks. 
 - `_model.R`: an R script used to plot a PDF model based on your data and cross-correlation plot
@@ -255,6 +255,15 @@ The output files:
 The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of peaks into the QC spreadsheet.
+
+
+From these output files, we will generate:
+
+1. A `bed/bigBed` file of peak calls\*
+2. A `bigWig` track of the fold-enrichment (treatment over the background)
+3. A `bigWig` track of the -log<sub>10</sub> *p*-value (treatment over the background)
+
+\*The `bed/bigBed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
 
 **Call peaks for pooled replicates:**
 
