@@ -57,7 +57,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** the fastQC report details the total number of reads for the sample. This value can be input into the QC spreadsheet. (If using paired-end reads, divide by 2 for the number of fragments).
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. (If using paired-end reads, divide by 2 for the number of fragments).
 
 ### Adapter trimming 
 
