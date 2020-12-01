@@ -76,7 +76,7 @@ fastp -i <sample>_R1.fastq.gz -I <sample>_R2.fastq.gz -o <sample>_R1.trimmed.fas
 
 The output of fastp includes a html report, part of which is shown below. This presents the total number of reads before and after filtering, including the % of high quality (Q30) bases. The report also shows the main causes of read removal. In the example below, 1.9% of reads were removed because they were shorter than the minimum read length specified above by the -l argument (35bp).
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of trimmed reads to the QC spreadsheet. 
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of reads removed during trimming to the QC spreadsheet. 
 
 <img src="https://github.com/CebolaLab/ATAC-seq/blob/master/Figures/fastp-html.png" width="600">
 
@@ -120,6 +120,9 @@ samtools sort <sample>.bam -o <sample>_sorted.bam
 
 #Generate an index file
 samtools index <sample>_sorted.bam
+
+#Calculate the total number of mapped reads
+samtools flagstat <sample>_sorted.bam > <sample>_sorted.flagstat
 ```
 
 ## Post-alignment QC
@@ -131,10 +134,9 @@ The post-alignment QC involves several steps:
 - [Shift read coordinates](#shift-read-coordinates-optional)
 - Estimate library complexity and calculate calculate NRF (non-redundant fraction), PBC1, PBC2 (PCR bottleneck coefficient).
 
-
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
 
-*A note on sam file flags:* the output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which can map to more than one position are assigned a low quality scores. The user can assess the proportion of uniquely mapped reads (prior to the filtering step above) using `samtools -view -q 30 -c <sample_sorted.bam` (divide this number of reads by 2 to calculate the number of DNA fragments). In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). *A low % of uniquely mapped reads* may result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). 
+*A note on sam file flags:* the output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which can map to more than one position are assigned a low quality scores. The user can assess the proportion of uniquely mapped reads (prior to the filtering step above) using `samtools -view -q 30 -c <sample_sorted.bam` (divide this number of reads by 2 to calculate the number of DNA fragments). In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). A low % of uniquely mapped reads may result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). 
 
 The following command will remove unmapped reads and secondary alignments `samtools fixmate -r` and mark and remove duplicate reads `samtools markdup -r`. The `samtools markdup` will also estimate library complexity, with the output saved in the `<sample>.markdup.stats` file.
 
@@ -145,6 +147,12 @@ samtools sort -n <sample>_sorted.bam | samtools fixmate -rcm - - | samtools sort
 #Index the resulting bam file
 samtools index <sample>.rmdup.bam
 ```
+
+From the `<sample>.markdup.stats` file:
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by diving the *duplicate total* by the number *READ*. Input to the spreadsheet.
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
 *A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads to increase confidence and reproducibility:
 
