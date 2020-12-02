@@ -1,6 +1,6 @@
 # Analysis pipeline for ChIPmentaion data for histones
 
-A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
+A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol [Schmidl et al. (2015)](https://www.nature.com/articles/nmeth.3542) from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
 
 Correspondence: hannah.maude12@imperial.ac.uk
 
@@ -374,7 +374,7 @@ The following steps assume that there are two biological replicates, `rep1` and 
 ```bash
 wigCorrelate <sample>_rep1_macs2_FE.bw <sample>_rep2_macs2_FE.bw
 ```
-Assuming there is a staisfactory correlation, peaks should be called using the pooled replicates by including all `bam` files in the `macs2 callpeak` command:
+Assuming there is a satisfactory correlation, peaks should be called using the pooled replicates by including all `bam` files in the `macs2 callpeak` command:
 
 ```bash
 macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -g 2862010578 -n <sample>_pooled -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
