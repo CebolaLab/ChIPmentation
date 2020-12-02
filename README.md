@@ -1,6 +1,6 @@
 # Analysis pipeline for ChIPmentaion data for histones
 
-A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol [Schmidl et al. (2015)](https://www.nature.com/articles/nmeth.3542) from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
+A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol [(Schmidl et al. 2015)](https://www.nature.com/articles/nmeth.3542) from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
 
 Correspondence: hannah.maude12@imperial.ac.uk
 
