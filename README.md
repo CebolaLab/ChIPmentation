@@ -233,8 +233,8 @@ alignmentSieve --numberOfProcessors max --ATACshift --blackListFileName hg38-bla
 
 #Sort and index the bam file
 #Set the number of preferred threads with the -@ option
-samtools sort -@ 8 -O bam -o <sample>.shifted.bam <sample>.tmp.bam
-samtools index -@ 8 <sample>.shifted.bam
+samtools sort -O bam -o <sample>.shifted.bam <sample>.tmp.bam
+samtools index <sample>.shifted.bam
 
 rm <sample>.tmp.bam
 ```
@@ -268,7 +268,7 @@ bamCompare --scaleFactorsMethod readCount --ignoreForNormalization chrX --blackL
 
 ## Peak calling
 
-The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call narrow or broad peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), shows the categories of histone-peak types. H3K9me3 is an exception as it is enriched in repetitive regions of the genome.
+The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call **broad** or **narrow** peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), shows the categories of histone-peak types. H3K9me3 is an exception as it is enriched in repetitive regions of the genome. MACS2 is typically more reliable for calling narrow peaks.
 
 <img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/broad-vs-narrow-histones-ENCODE.png" width="600">
 
@@ -355,8 +355,16 @@ macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>
 
 The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
 
+*The following code is adapted from the ENCODE pipeline, naive overlap script*
+
+***TO BE COMPLETED***
+
 ```bash
-intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | \
+awk_command="'awk \'BEGIN{{FS="\\t";OFS="\\t"} {s1=$3-$2; s2=$13-$12; if (($21/s1 >= 0.5) || ($21/s2 >= 0.5)) {print $0}}'"
+
+cut_command='cut -f 1-10 | sort | uniq | '
+
+intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command
 
 ```
 
