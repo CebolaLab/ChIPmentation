@@ -358,6 +358,8 @@ The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the repl
 
 *The following code is adapted from the ENCODE pipeline.* As done by ENCODE, overlapping peaks should overlap by at least 50% for either of the two peaks. First, the pooled peaks will be subsetted for those which overlap replicate 1, then further subsetted for those which also overlap replicate 2. 
 
+**For narrow peaks:** 
+
 ```bash
 #Identify peaks from the POOLED replicates which are in BOTH replicate 1 and replicate 2
 
@@ -367,6 +369,19 @@ intersectBed -wa -a <sample>_pooled.narrowPeak -b <sample>_rep2_peaks.narrowPeak
 #Next, take these peaks and extract the ones which overlap with replicate 2
 intersectBed -wa -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > replicated_narrowPeaks.bed
 ```
+
+**For broad peaks:** 
+
+```bash
+#Identify peaks from the POOLED replicates which are in BOTH replicate 1 and replicate 2
+
+#First extract pooled peaks which are in replicate 1
+intersectBed -wa -a <sample>_pooled.narrowPeak -b <sample>_rep2_peaks.narrowPeak  | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$12-$11; if(($19/s1 > 0.5) || ($19/s2 > 0.5)) {print $0}}' | cut -f 1-9 > tmp.bed
+
+#Next, take these peaks and extract the ones which overlap with replicate 2
+intersectBed -wa -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$12-$11; if(($19/s1 > 0.5) || ($19/s2 > 0.5)) {print $0}}' | cut -f 1-9 > replicated_narrowPeaks.bed
+```
+
 
 ## Peak quality control
 
