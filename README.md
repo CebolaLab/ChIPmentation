@@ -296,8 +296,8 @@ A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctrainin
 
 The following sections cover:
 
-- [Call peaks for individual replicates](#call-peaks-for-individual-replicates)
-- [Call peaks for pooled replicates](#call-peaks-for-pooled-replicates)
+- [Call peaks for individual replicates](#call-peaks-for-individual-replicates) and generate bigWig tracks
+- [Call peaks for pooled replicates](#call-peaks-for-pooled-replicates) and generate bigWig tracks
 - [Extract replicated peaks](#extract-replicated-peaks)
 
 
