@@ -56,7 +56,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in R1 and R2 to calculate the **total number of reads**. If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
+The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in the read 1 (R1) *and* read r (R2) files to calculate the **total number of reads**. (Note that for paired-end reads, each DNA fragment has two reads since it is sequenced from both ends). If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. 
 
