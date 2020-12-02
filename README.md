@@ -277,6 +277,8 @@ A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctrainin
 
 ### Call peaks for individual replicates
 
+To call **narrow** peaks for individual replicates:
+
 ```bash
 #Call peaks
 macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>_macs2.log
