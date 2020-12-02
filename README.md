@@ -273,7 +273,7 @@ The ChIP-seq peaks, either of histone marks or protein binding, will be called u
 
 According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/histone/), **narrow-peak** histone experiments should have **at least 20 million usable fragments**, while **broad-peak** histone experiments should have at least **45 million usable fragments**. 
 
-A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html).
+A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html). Detailed information on the subcommands used within `macs2 callpeak` are provided [at this link](https://github.com/macs3-project/MACS/wiki/Advanced%3A-Call-peaks-using-MACS2-subcommands).
 
 ### Call peaks for individual replicates
 
@@ -356,21 +356,16 @@ macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>
 
 The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
 
-*The following code is adapted from the ENCODE pipeline.*
-
-***TO BE COMPLETED***
+*The following code is adapted from the ENCODE pipeline.* As done by ENCODE, overlapping peaks should overlap by at least 50% for either of the two peaks. First, the pooled peaks will be subsetted for those which overlap replicate 1, then further subsetted for those which also overlap replicate 2. 
 
 ```bash
 #Identify peaks from the POOLED replicates which are in BOTH replicate 1 and replicate 2
-awk_command="'awk \'BEGIN{{FS="\\t";OFS="\\t"} {s1=$3-$2; s2=$13-$12; if (($21/s1 >= 0.5) || ($21/s2 >= 0.5)) {print $0}}'"
-
-cut_command='cut -f 1-10 | sort | uniq | '
 
 #First extract pooled peaks which are in replicate 1
-intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled
+intersectBed -wa -a <sample>_pooled.narrowPeak -b <sample>_rep2_peaks.narrowPeak  | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > tmp.bed
 
-#Next, extract the output peaks which are in replicate 2
-intersectBed -wa -a tmp_pooled -b <sample>_rep2_peaks.narrowPeak | awk_command | cut_command > <sample>replicated_peaks.narrowPeak
+#Next, take these peaks and extract the ones which overlap with replicate 2
+intersectBed -wa -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > replicated_narrowPeaks.bed
 ```
 
 ## Peak quality control
@@ -383,7 +378,7 @@ To assess the quality of our peaks, we will use the *R* package ChIPQC as descri
 
 [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html)
 
-
+See this [paper](https://www.nature.com/articles/s41598-020-66998-4).
 
 ## ChIPmentation analysis steps 
 
