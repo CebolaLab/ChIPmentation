@@ -56,7 +56,7 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in the read 1 (R1) *and* read r (R2) files to calculate the **total number of reads**. (Note that for paired-end reads, each DNA fragment has two reads since it is sequenced from both ends). If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
+The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in the read 1 (R1) *and* read 2 (R2) files to calculate the **total number of reads**. (Note that for paired-end reads, each DNA fragment has two reads since it is sequenced from both ends). If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. 
 
@@ -151,7 +151,7 @@ samtools index <sample>.rmdup.bam
 
 From the `<sample>.markdup.stats` file:
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by dividing the *duplicate total* by the number *READ*. Input to the spreadsheet.
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by dividing the *DUPLICATE TOTAL* by the number *READ*. Input to the spreadsheet. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped reads were removed prior in the `samtools fixmate -rcm` step.
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
