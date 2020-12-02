@@ -164,13 +164,20 @@ samtools index <sample>.rmdup.bam
 
 From the `<sample>.markdup.stats` file:
 
-Calculate the % of duplicates removed by dividing the **DUPLICATE TOTAL** by the number **READ**. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped and unmapped reads were removed prior in the `samtools fixmate -rcm` step. The fraction of duplicates can be calculated on the command line:
+Calculate the % of duplicates removed by dividing the **DUPLICATE TOTAL** by the number **READ**. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped and unmapped reads were removed prior in the `samtools fixmate -rcm` step. 
+
+**Calculate the % of (duplicate) reads removed:** 
 
 ```bash
 printf %.2f $(echo $(echo -e `grep -e 'DUPLICATE TOTAL' -e 'READ' <sample>.markdup.stats | cut -d ':' -f2` | paste - - | awk '{ print $2/$1 }')*100 | bc -l) 
 ```
-
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of duplicates into the QC spreadsheet. 
+
+**Extract the estimated library complexity:** 
+
+```bash
+grep 'ESTIMATED_LIBRARY_SIZE' <sample>.markdup.stats | cut -d ' ' -f 2
+```
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
