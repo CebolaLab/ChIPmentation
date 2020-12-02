@@ -151,7 +151,9 @@ samtools index <sample>.rmdup.bam
 
 From the `<sample>.markdup.stats` file:
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: calculate the % of duplicates by dividing the *DUPLICATE TOTAL* by the number *READ*. Input to the spreadsheet. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped reads were removed prior in the `samtools fixmate -rcm` step.
+Calculate the % of duplicates by dividing the *DUPLICATE TOTAL* by the number *READ*. Input to the spreadsheet. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped reads were removed prior in the `samtools fixmate -rcm` step.
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of duplicates into the QC spreadsheet. 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
