@@ -17,8 +17,6 @@ According to [ENCODE](https://www.encodeproject.org/chip-seq/histone/), the curr
 - For broad-peak histone experiments, each replicate should have 45 million usable fragments.
 - Quality control metrics are collected to determine library complexity, read depth, FRiP score, and reproducibility.
 
-This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+). Blue boxes ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) indicate where the expected output files are generated. 
-
 For uniformity of experiments, it is recommended that:
 
 - The read length should be a minimum of 50 base pairs, though longer read lengths are encouraged; the pipeline can process read lengths as low as 25 base pairs. Sequencing may be paired- or single-ended.
@@ -26,9 +24,19 @@ For uniformity of experiments, it is recommended that:
 - Replicates should match in terms of read length and run type. 
 - Pipeline files are mapped to either the GRCh38 or mm10 sequences.
 
+This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+). Blue boxes ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) indicate where the expected output files are generated. 
+
 The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), detailed the outputs:
 
 <img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/outputs-ENCODE.png" width="800">
+
+
+The main output files will be:
+
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) peaks
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) bigWig tracks for fold-enrichment
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) bigWig tracks for -log<sub>10</sub> *p*-value
+
 
 In addition, this pipeline will cover differential binding analysis, functional analysis and motif discovery. 
 
