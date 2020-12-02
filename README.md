@@ -294,6 +294,13 @@ According to the [ENCODE guidelines](https://www.encodeproject.org/chip-seq/hist
 
 A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/05_peak_calling_macs.html). Detailed information on the subcommands used within `macs2 callpeak` are provided [at this link](https://github.com/macs3-project/MACS/wiki/Advanced%3A-Call-peaks-using-MACS2-subcommands).
 
+The following sections cover:
+
+- [Call peaks for individual replicates](#call-peaks-for-individual-replicates)
+- [Call peaks for pooled replicates](#call-peaks-for-pooled-replicates)
+- [Extract replicated peaks](#extract-replicated-peaks)
+
+
 ### Call peaks for individual replicates
 
 To call **narrow** peaks for individual replicates:
@@ -395,7 +402,7 @@ bedGraphToBigWig <sample>_pooled_ppois.sorted.bdg hg38.chrom.sizes > <sample>_po
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_pooled_macs2_pval.bw`
 
-#### Extract replicated peaks
+### Extract replicated peaks
 
 *The following code is adapted from the ENCODE pipeline.* As done by ENCODE, overlapping peaks should overlap by at least 50% for either of the two peaks. First, the pooled peaks will be subsetted for those which overlap replicate 1, then further subsetted for those which also overlap replicate 2. 
 
