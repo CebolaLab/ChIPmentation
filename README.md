@@ -440,7 +440,6 @@ intersectBed -wa -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cu
 To assess the quality of our peaks, we will use the *R* package ChIPQC as described in this [online tutorial](https://github.com/hbctraining/Intro-to-ChIPseq/blob/master/lessons/06_combine_chipQC_and_metrics.md) by the Harvard Chan Bioinformatics Core.
 
 
-
 ## Differential binding
 
 [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html)
@@ -462,5 +461,8 @@ The original ChIPmentaion paper 'ChIPmentation: fast, robust, low-input ChIP-seq
 
 For both ChIP-seq and ChIPmentation data, MACS2 was run independently for biological replicates using a bandwidth of 200 bp and the matched IgG control as background. For broad histone marks (H3K27me3, H3K36me3) the “--broad”, “--nomodel”, “--extsize 73” and “--pvalue 1e-3” flags and arguments were provided. After ensuring consistency among replicates, downstream analysis was performed on peaks called from merged biological replicates in the same way as described. 
 
+# Resources
 
-
+- ENCODE define replicated peaks [script](https://github.com/ENCODE-DCC/chip-seq-pipeline/blob/master/dnanexus/overlap_peaks/src/overlap_peaks.py)
+- ENCODE [terms and definitions](https://www.encodeproject.org/data-standards/terms)
+- ChIP-seq tutorials from the [Harvard Chan Bioinformatics Core (HBC)](https://hbctraining.github.io/Intro-to-ChIPseq/lessons/)
