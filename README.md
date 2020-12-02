@@ -375,6 +375,8 @@ macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>
 
 The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
 
+#### Generate bigWigs
+
 Generate the Fold-enrichment and -log<sub>10</sub> *p*-value bigWig files for the pooled replicates:
 
 ```bash
@@ -393,7 +395,7 @@ bedGraphToBigWig <sample>_pooled_ppois.sorted.bdg hg38.chrom.sizes > <sample>_po
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_pooled_macs2_pval.bw`
 
-**2. -log<sub>10</sub> *p*-value bigWig**
+#### Extract replicated peaks
 
 *The following code is adapted from the ENCODE pipeline.* As done by ENCODE, overlapping peaks should overlap by at least 50% for either of the two peaks. First, the pooled peaks will be subsetted for those which overlap replicate 1, then further subsetted for those which also overlap replicate 2. 
 
