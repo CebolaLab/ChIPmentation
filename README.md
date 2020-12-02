@@ -173,6 +173,13 @@ printf %.2f $(echo $(echo -e `grep -e 'DUPLICATE TOTAL' -e 'READ' <sample>.markd
 ```
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the % of duplicates into the QC spreadsheet. 
 
+**Exctract the total number of uniquely mapped reads after duplicate removal:** 
+
+```bash
+grep 'WRITTEN' <sample>.markdup.stats | cut -d ' ' -f 2
+```
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of uniquely mapped, non-duplicated reads into the QC spreadsheet.
+
 **Extract the estimated library complexity:** 
 
 ```bash
@@ -186,7 +193,7 @@ grep 'ESTIMATED_LIBRARY_SIZE' <sample>.markdup.stats | cut -d ' ' -f 2
 *Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
 
 
-**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads. Note the number of DNA reads is 2x the number of DNA fragments 
+**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads. 
 
 ```bash
 #Generate a stats report detailing the total number of fragments following filtering
