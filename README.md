@@ -33,8 +33,10 @@ The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/his
 
 The main output files will be:
 
-![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) peaks
+![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) bed peaks file
+
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) bigWig tracks for fold-enrichment
+
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) bigWig tracks for -log<sub>10</sub> *p*-value
 
 
