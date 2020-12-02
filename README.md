@@ -61,7 +61,10 @@ The total number of DNA reads is given in the fastQC report under 'Total Sequenc
 To automtically extract the total number of sequences, run:
 
 ```bash
-unzip -c <sample>_fastqc.zip <sample>_fastqc/fastqc_data.txt | grep 'Total Sequences' | cut -f 2
+totalreads=$(unzip -c <sample>_fastqc.zip <sample>_fastqc/fastqc_data.txt | grep 'Total Sequences' | cut -f 2)
+
+echo $totalreads
+#This number will be used again later so is saved as a variable 'totalreads'
 ```
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. 
@@ -164,7 +167,7 @@ samtools index <sample>.rmdup.bam
 
 From the `<sample>.markdup.stats` file:
 
-Calculate the % of duplicates removed by dividing the **DUPLICATE TOTAL** by the number **READ**. The number *READ* is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped and unmapped reads were removed prior in the `samtools fixmate -rcm` step. 
+Calculate the % of duplicates removed by dividing the **DUPLICATE TOTAL** by the number **READ**. The number READ is the total number of uniquely mapped reads, before duplicate removal. Note that multi-mapped and unmapped reads were removed prior in the `samtools fixmate -rcm` step, leaving only uniquely mapped reads (reads which map to one location in the genome).
 
 **Calculate the % of (duplicate) reads removed:** 
 
@@ -176,7 +179,9 @@ printf %.2f $(echo $(echo -e `grep -e 'DUPLICATE TOTAL' -e 'READ' <sample>.markd
 **Exctract the total number of uniquely mapped reads after duplicate removal:** 
 
 ```bash
-grep 'WRITTEN' <sample>.markdup.stats | cut -d ' ' -f 2
+totalunique=$(grep 'WRITTEN' <sample>.markdup.stats | cut -d ' ' -f 2)
+
+echo $totalunique
 ```
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the total number of uniquely mapped, non-duplicated reads into the QC spreadsheet.
 
@@ -188,24 +193,26 @@ grep 'ESTIMATED_LIBRARY_SIZE' <sample>.markdup.stats | cut -d ' ' -f 2
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the estimated library size to the QC spreadsheet.
 
-*A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads to increase confidence and reproducibility:
+**Calculate the non-redundant fraction (NRF)**
 
-*Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
-
-
-**Calculate the non-redundant fraction (NRF)**: the NRF score is calculated as the number of distinct uniquely mapping reads (i.e. after removing duplicates) / total number of reads. 
+The NRF score is calculated as the number of distinct uniquely mapping reads (`$totalunique`) / total number of reads (`$totalread`).
 
 ```bash
-#Generate a stats report detailing the total number of fragments following filtering
-samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
-
-#The first value gives the total number of reads
+printf %.2f $(echo $totalunique/$totalreads | bc -l)
 ```
 
 <img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/NRF-guidelines.png" width="400">
 
 
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the NRF score into the QC spreadsheet.
+
+
+$totalreads
+
+*A note on multi-mapping*: here, reads which align to more than one position have been removed (through the `samtools fixmate -r` option). Some users may opt to retain these 'multi-mapped reads', especially if single-end data is beign used. Removing multi-mapped reads can result in the loss of biologically informative reads (false negatives), but retaining them can lead to false potivies. The choice will depend on the study design. It is recommended by the Harvard hbctraining tutorial to *remove* multi-mapped reads to increase confidence and reproducibility:
+
+*Sam file flags*: the read identity as a PCR duplicate, or uniquely mapped read is stored in the sam/bam file 'flag'. The individual flags are reported [here](https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/04_alignment_quality.html) and are combined in a `sam/bam` file to one score, which can be deconstructed back to the original flags using [online interpretation tools](https://broadinstitute.github.io/picard/explain-flags.html). In this pipeline, the bowtie2 parameters `--no-mixed` and `--no-discordant` prevented the mapping of only one read in a pair, so these flags will not be present. All flags reported in a `sam` file can optionally be viewed using  `grep -v ^@ <sample>.sam | cut -f 2 | sort | uniq`.
+
 
 ### Remove ENCODE blacklist regions
 
