@@ -149,7 +149,6 @@ The post-alignment QC involves several steps:
 - [Remove unmapped, multi-mapped and duplicates reads](#removed-unmapped-multi-mapped-and-duplicates-reads-and-estimate-library-complexity)
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates-optional)
-- Estimate library complexity and calculate calculate NRF (non-redundant fraction), PBC1, PBC2 (PCR bottleneck coefficient).
 
 ### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
 
@@ -355,17 +354,21 @@ macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>
 
 The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
 
-*The following code is adapted from the ENCODE pipeline, naive overlap script*
+*The following code is adapted from the ENCODE pipeline.*
 
 ***TO BE COMPLETED***
 
 ```bash
+#Identify peaks from the POOLED replicates which are in BOTH replicate 1 and replicate 2
 awk_command="'awk \'BEGIN{{FS="\\t";OFS="\\t"} {s1=$3-$2; s2=$13-$12; if (($21/s1 >= 0.5) || ($21/s2 >= 0.5)) {print $0}}'"
 
 cut_command='cut -f 1-10 | sort | uniq | '
 
-intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command
+#First extract pooled peaks which are in replicate 1
+intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled
 
+#Next, extract the output peaks which are in replicate 2
+intersectBed -wa -a tmp_pooled -b <sample>_rep2_peaks.narrowPeak | awk_command | cut_command > <sample>replicated_peaks.narrowPeak
 ```
 
 ## Peak quality control
