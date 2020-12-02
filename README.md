@@ -195,7 +195,7 @@ grep 'ESTIMATED_LIBRARY_SIZE' <sample>.markdup.stats | cut -d ' ' -f 2
 
 **Calculate the non-redundant fraction (NRF)**
 
-The NRF score is calculated as the number of distinct uniquely mapping reads (`$totalunique`) / total number of reads (`$totalread`).
+The NRF score is calculated as the number of distinct uniquely mapping reads (`$totalunique`) / total number of reads (`$totalreads`).
 
 ```bash
 printf %.2f $(echo $totalunique/$totalreads | bc -l)
