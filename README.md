@@ -56,7 +56,9 @@ fastqc <sample>_R2.fastq.gz -d . -o .
 multiqc *.html
 ```
 
-![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. (If using paired-end reads, divide by 2 for the number of fragments).
+The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in R1 and R2 to calculate the **total number of reads**. If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
+
+![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value:** input the total number of reads into the QC spreadsheet. 
 
 ### Adapter trimming 
 
@@ -167,6 +169,9 @@ samtools flagstat <sample>.rmdup.bam > <sample>.rmdup.flagstat
 #The first value gives the total number of reads
 ```
 
+<img src="https://github.com/CebolaLab/ChIPmentation/blob/main/Figures/NRF-guidelines" width="600">
+
+
 ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) **QC value**: input the NRF score into the QC spreadsheet.
 
 ### Remove ENCODE blacklist regions
@@ -237,6 +242,7 @@ A useful tutorial on how MACS2 calls peaks is provided [here](https://hbctrainin
 ### Call peaks for individual replicates
 
 ```bash
+#Call peaks
 macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>_macs2.log
 ```
 
@@ -245,7 +251,7 @@ Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the or
 The output files:
 
 - `_peaks.narrowPeak`: a BED6+4 file detailing the peak locations, along with the peak summits, *p*-value and *q*-values 
-- `_peaks.xls`: a tabular file containing addition information, such as pileup and fold-encirhment.
+- `_peaks.xls`: a tabular file containing addition information, such as pileup and fold-enrichment.
 - `_summits.bed`: the locations of the summits for all peaks. 
 - `_model.R`: an R script used to plot a PDF model based on your data and cross-correlation plot
 - `_control_lambda.bdg`: bedGraph format for the input sample
@@ -253,7 +259,7 @@ The output files:
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: the `<sample>_peaks.narrowPeak` is a `bed` file containing the peak information for the INDIVIDUAL replicate\*.
 
-\*The `<sample>_peaks.narrowPeak` can be uploaded and visualised via a genome browser such as UCSC. The `bed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. Two or more biological replicates will be combined in the next stage to generate a combined set of peaks.
+\*The `<sample>_peaks.narrowPeak` can be uploaded and visualised via a genome browser such as UCSC. The `bed` file of peak calls is referred to at this stage as 'relaxed' peak calls, since they are called for individual replicates. This `bed` file is therefore most useful as an input to the next stage: calling replicated peaks.
 
 The total number of peaks can be obtained using `wc -l <sample>_peaks.narrowPeak`. 
 
@@ -264,7 +270,6 @@ From these output files, we will generate:
 
 1. A `bigWig` track of the fold-enrichment (treatment over the background)
 2. A `bigWig` track of the -log<sub>10</sub> *p*-value (treatment over the background)
-
 
 **1. Fold-enrichment bigWig**
 
@@ -298,12 +303,25 @@ bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pva
 
 ### Call peaks for pooled replicates
 
-The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practise requires a combined set of peaks for the pooled replicates to be called. Assuming there are two replicates, `rep1` and `rep2`:
+The step assumes that the ChIP-seq expriment includes *biological replicates* for each treated condition. Best practise requires a combined set of peaks for the pooled replicates to be called. Replicated peaks are defined as the peaks in the pooled replicates which are observed in at least two replicates. 
+
+The following steps assume that there are two biological replicates, `rep1` and `rep2`. Any number of replicates can be added. First, check the correlation between the replicates using the UCSC tool wigCorrelate:
 
 ```bash
-macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -g 2862010578 -n <sample> -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
+wigCorrelate <sample>_rep1_macs2_FE.bw <sample>_rep2_macs2_FE.bw
+```
+Assuming there is a staisfactory correlation, peaks should be called using the pooled replicates by including all `bam` files in the `macs2 callpeak` command:
+
+```bash
+macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -g 2862010578 -n <sample>_pooled -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
 ```
 
+The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
+
+```bash
+intersectBed -wa -a <sample>_pooled_peaks.narrowPeak -b <sample>_rep1_peaks.narrowPeak | \
+
+```
 
 ## Peak quality control
 
