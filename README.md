@@ -275,15 +275,6 @@ bamCoverage --bam <sample>.shifted.bam -o <sample>.SeqDepthNorm.bw --binSize 10 
 bamCoverage --bam <sample>.input.bam -o <sample>.input.SeqDepthNorm.bw --binSize 10 --normalizeUsing RPGC --effectiveGenomeSize 2862010578 --ignoreForNormalization chrX --extendReads --blackListFileName hg38-blacklist.v2.bed
 ```
 
-To generate a data track normalised to the input:
-
-```bash
-#Add -p to specify the number of processors to use
-#--scaleFactorsMethod readCount or --normaliseUsing BPM ? 
-bamCompare --scaleFactorsMethod readCount --ignoreForNormalization chrX --blackListFileName hg38-blacklist.v2.bed -b1 <sample>.shifted.bam -b2 <input>.bam -o <sample>.log2ratio.bw
-```
-
-
 ## Peak calling
 
 The ChIP-seq peaks, either of histone marks or protein binding, will be called using the [MACS2](https://pypi.org/project/MACS2/) algorithm. It is important to first know whether you want to call **broad** or **narrow** peaks. Typically, transcription factors form narrow peaks, although there are exceptions such as PolII which binds across the gene body and thus forms 'broad' peaks of binding. For histone marks, examples of narrow peaks include marks enriched at transcription state sites, wherease marks which mark heterochromatin may cover extensive regions and therefore form broad peaks. The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), shows the categories of histone-peak types. H3K9me3 is an exception as it is enriched in repetitive regions of the genome. MACS2 is typically more reliable for calling narrow peaks.
