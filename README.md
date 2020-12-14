@@ -307,7 +307,7 @@ To call **narrow** peaks for individual replicates:
 
 ```bash
 #Call peaks
-macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>.macs2/<sample>_macs2.log
+macs2 callpeak -t <sample>.shifted.bam -c <input>.bam -f BAM -g 2862010578 -n <sample> --outdir <sample>.macs2 2> <sample>_macs2.log
 ```
 
 Note, for broad histone marks (H3K27me3, H3K36me3) the parameters used in the original ChIPmentation paper by [Schmidl et al. (2015)](https://www.nature.com/articles/nmeth.3542) are `--broad --nomodel --extsize 73 --pvalue 1e-3`.
