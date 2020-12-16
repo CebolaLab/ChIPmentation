@@ -169,7 +169,7 @@ The post-alignment QC involves several steps:
 - [Remove ENCODE blacklist regions](#remove-encode-blacklist-regions)
 - [Shift read coordinates](#shift-read-coordinates-optional)
 
-### Remove unmapped, multi-mapped and duplicates reads and estimate library complexity
+### Remove unmapped, multi-mapped and duplicates reads
 
 *A note on sam file flags:* the output `sam/bam` files contain several measures of quality. First, the alignment quality score. Reads which can map to more than one position are assigned a low quality scores. The user can assess the proportion of uniquely mapped reads (prior to the filtering step above) using `samtools -view -q 30 -c <sample_sorted.bam` (divide this number of reads by 2 to calculate the number of DNA fragments). In general, >70% uniquely mapped reads is expected, while <50% may be a cause for concern [(Bailey et al. 2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3828144/pdf/pcbi.1003326.pdf). A low % of uniquely mapped reads may result from short reads, excessive PCR amplification or problems with the PCR (Bailey et al. 2013). 
 
