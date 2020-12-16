@@ -403,10 +403,10 @@ bedGraphToBigWig <sample>_pooled_ppois.sorted.bdg hg38.chrom.sizes > <sample>_po
 #Identify peaks from the POOLED replicates which are in BOTH replicate 1 and replicate 2
 
 #First extract pooled peaks which are in replicate 1
-intersectBed -wa -a <sample>_pooled.narrowPeak -b <sample>_rep2_peaks.narrowPeak  | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > tmp.bed
+intersectBed -wo -a <sample>_pooled.narrowPeak -b <sample>_rep2_peaks.narrowPeak  | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > tmp.bed
 
 #Next, take these peaks and extract the ones which overlap with replicate 2
-intersectBed -wa -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > replicated_narrowPeaks.bed
+intersectBed -wo -a tmp.bed -b <sample>_rep1_peaks.narrowPeak | awk_command | cut_command > tmp_pooled | awk 'BEGIN {FS="\t" ; OFS = "\t"} {s1=$3-$2 ; s2=$13-$12; if(($21/s1 > 0.5) || ($21/s2 > 0.5)) {print $0}}' | cut -f 1-10 > replicated_narrowPeaks.bed
 ```
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `replicated_narrowPeaks.bed`
