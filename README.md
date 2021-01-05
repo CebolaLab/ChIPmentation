@@ -337,7 +337,7 @@ macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m FE -
 #Sort the bedGraph file and convert to bigWig
 sort -k1,1 -k2,2n <sample>_FE.bdg > <sample>_FE.sorted.bdg
 
-bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes > <sample>_macs2_FE.bw
+bedGraphToBigWig <sample>_FE.sorted.bdg hg38.chrom.sizes <sample>_macs2_FE.bw
 ```
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_FE.bw`
@@ -351,7 +351,7 @@ macs2 bdgcmp -t <sample>_treat_pileup.bdg -c <sample>_control_lambda.bdg -m ppoi
 #Sort the bedGraph file and convert it to bigWig using the hg38 chromosome sizes
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
 
-bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes > <sample>_macs2_pval.bw
+bedGraphToBigWig <sample>_ppois.sorted.bdg hg38.chrom.sizes <sample>_macs2_pval.bw
 ```
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_pval.bw`
@@ -381,12 +381,12 @@ Generate the Fold-enrichment and -log<sub>10</sub> *p*-value bigWig files for th
 #Generate the fold-change bedGraph
 macs2 bdgcmp -t <sample>_pooled_treat_pileup.bdg -c <sample>_pooled_control_lambda.bdg -m FE -o <sample>_pooled_FE.bdg 
 sort -k1,1 -k2,2n <sample>_pooled_FE.bdg > <sample>_pooled_FE.sorted.bdg
-bedGraphToBigWig <sample>_pooled_FE.sorted.bdg hg38.chrom.sizes > <sample>_pooled_macs2_FE.bw
+bedGraphToBigWig <sample>_pooled_FE.sorted.bdg hg38.chrom.sizes <sample>_pooled_macs2_FE.bw
 
 #Generate the p-value bedGraph
 macs2 bdgcmp -t <sample>_pooled_treat_pileup.bdg -c <sample>_pooled_control_lambda.bdg -m ppois -o <sample>_pooled_ppois.bdg
 sort -k1,1 -k2,2n <sample>_ppois.bdg > <sample>_ppois.sorted.bdg
-bedGraphToBigWig <sample>_pooled_ppois.sorted.bdg hg38.chrom.sizes > <sample>_pooled_macs2_pval.bw
+bedGraphToBigWig <sample>_pooled_ppois.sorted.bdg hg38.chrom.sizes <sample>_pooled_macs2_pval.bw
 ```
 
 ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) **Output file**: `<sample>_macs2_FE.bw`
