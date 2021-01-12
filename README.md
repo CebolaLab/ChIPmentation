@@ -433,9 +433,30 @@ To assess the quality of our peaks, we will use the *R* package ChIPQC as descri
 
 ## Differential binding
 
-[DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html)
+Differential binding will be assessed using [DiffBind](https://bioconductor.org/packages/release/bioc/html/DiffBind.html). (See this [paper](https://www.nature.com/articles/s41598-020-66998-4)). DiffBind makes use of DESeq2 to assess differential binding. 
 
-See this [paper](https://www.nature.com/articles/s41598-020-66998-4).
+To create a conda environment with the required packages:
+
+```bash
+conda create -n DiffBind r-essentials r-base r-tidyverse
+conda install -n DiffBind -c bioconda bioconductor-diffbind 
+conda install -n DiffBind -c bioconda bioconductor-genomeinfodbdata
+```
+
+Or, run the following from R:
+```R
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("DiffBind")
+BiocManager::install("GenomeInfoDbData")
+
+install.packages("tidyverse") 
+```
+
+Create a csv file containing 
+
+
 
 ## ChIPmentation analysis steps 
 
