@@ -368,7 +368,7 @@ wigCorrelate <sample>_rep1_macs2_FE.bw <sample>_rep2_macs2_FE.bw
 Assuming there is a satisfactory correlation, peaks should be called using the pooled replicates by including all `bam` files in the `macs2 callpeak` command:
 
 ```bash
-macs2 callpeak -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -B --broad --keep-dup all --cutoff-analysis -g 2862010578 -n <sample>_pooled -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
+macs2 callpeak -Q 0.01 -t <sample>_rep1_shifted.bam <sample>_rep2_shifted.bam -c <input>_rep1.bam <input>_rep2.bam -f BAM -B --broad --keep-dup all --cutoff-analysis -g 2862010578 -n <sample>_pooled -outdir <sample>_pooled.macs2 2> <sample>_pooled.macs2/<sample>_pooled_macs2.log
 ```
 
 The outut `<sample>_pooled_peaks.narrowPeak` file can be used to define the replicated peaks. `intersectBed` from [bedTools](https://bedtools.readthedocs.io/en/latest/content/tools/intersect.html) will be used.
