@@ -1,4 +1,4 @@
-# Analysis pipeline for ChIPmentaion data for histones
+# Analysis pipeline for ChIPmentation data for histones
 
 A step-by-step analysis pipeline for ChIP-seq data of histone modifications using the ChIPmentaion protocol [(Schmidl et al. 2015)](https://www.nature.com/articles/nmeth.3542) from the [Cebola Lab](https://www.imperial.ac.uk/metabolism-digestion-reproduction/research/systems-medicine/genetics--genomics/regulatory-genomics-and-metabolic-disease/).
 
@@ -77,7 +77,7 @@ multiqc *.html
 
 The total number of DNA reads is given in the fastQC report under 'Total Sequences'. If using paired-end reads, the total sequences in one file (R1 *or* R2) is the number of DNA fragments. Sum the total reads in the read 1 (R1) *and* read 2 (R2) files to calculate the **total number of reads**. (Note that for paired-end reads, each DNA fragment has two reads since it is sequenced from both ends). If a sample has been sequenced across multiple lanes, sum together all of the 'total sequences' to calculate the total number of reads. 
 
-To automtically extract the total number of sequences, run:
+To automatically extract the total number of sequences, run:
 
 ```bash
 totalreads=$(unzip -c <sample>_fastqc.zip <sample>_fastqc/fastqc_data.txt | grep 'Total Sequences' | cut -f 2)
