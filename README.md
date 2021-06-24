@@ -24,7 +24,7 @@ For uniformity of experiments, it is recommended that:
 - Replicates should match in terms of read length and run type. 
 - Pipeline files are mapped to either the GRCh38 or mm10 sequences.
 
-This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be promoted when to fill in values obtained during this pipeline by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+). Blue boxes ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) indicate where the expected output files are generated. 
+This GitHub repository contains an [excel spreadsheet](https://github.com/CebolaLab/ChIPmentation/blob/main/QC-template-ChIP-seq.xlsx) with the QC measures that should be generated and the recommended values from [ENCODE](https://www.encodeproject.org/chip-seq/histone/). The user will be prompted when to fill in values obtained during this pipeline by red boxes ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+). Blue boxes ![#1589F0](https://via.placeholder.com/15/1589F0/000000?text=+) indicate where the expected output files are generated. 
 
 The table below, lifted from [ENCODE](https://www.encodeproject.org/chip-seq/histone/), detailed the outputs:
 
